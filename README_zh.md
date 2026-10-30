@@ -40,7 +40,7 @@ conda activate deeprsm-example
 python -m pip install torch==2.4.0 numpy==1.24.4 pandas==2.0.3 netCDF4==1.7.1.post2 tqdm pytz
 ```
 
-系数预测已测试 Python 3.8.19、PyTorch 2.4.0。完整预处理、PR 和校验已测试 Python 3.9.21，还需要 SciPy、Matplotlib、Cartopy、cmaps、scikit-learn 和 openpyxl。完整版本见 `tests/environment_dl.txt`、`tests/environment_devin_env.txt`。如使用两个独立环境，将 `PY_DL` 和 `PY_DATA` 分别设为对应环境的 Python 路径。随仓库提供的 `esil` 通过下方 `PYTHONPATH` 选择。尚未验证全新环境安装。
+系数预测已测试 Python 3.8.19、PyTorch 2.4.0。完整预处理、PR 和校验已测试 Python 3.9.21；数据处理环境使用 NumPy 2.0.2、pandas 2.2.3、SciPy 1.13.1、Matplotlib 3.9.4、netCDF4 1.7.2、Cartopy 0.23.0、cmaps 2.0.1、scikit-learn 1.6.1 和 openpyxl 3.1.5。如使用两个独立环境，将 `PY_DL` 和 `PY_DATA` 分别设为对应环境的 Python 路径。两份原始 `esil` 版本分别保留在 `dependencies/dl/` 和 `dependencies/devin_env/`，通过下方 `PYTHONPATH` 选择。尚未验证全新环境安装。
 
 ### 2. 检查配置与输入
 
@@ -79,7 +79,7 @@ CFG=a_config_d3_202209_M_devin_0605.ini
 完成环境设置后，在仓库根目录执行：
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config a_config_example_five_days.ini
 ```
 
@@ -90,7 +90,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
 ### 3. 预处理 CMAQ 输入（完整月份）
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
@@ -99,7 +99,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 ### 4. 使用已训练权重构建 RSM
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config "$CFG"
 ```
 
@@ -108,7 +108,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
 ### 5. 计算 PR、VNr 和 EKMA
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B g_rsm_vnr_pr.py --config "$CFG"
 ```
 
@@ -123,7 +123,7 @@ PR 与 VNr 无量纲，臭氧峰值及 EKMA 浓度单位为 ppb。PR 搜索范�
 ### 6. 校验 RSM 与 CMAQ
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B f_rsm_performance.py --config "$CFG"
 ```
 
@@ -159,13 +159,15 @@ DeepRSM_Scripts/
 |-- g_rsm_vnr_pr.py                 # PR、VNr、EKMA
 |-- run_pipeline.py                # 原批处理入口
 |-- create_rsm_struct/             # 建模网络与数据类
+|-- dependencies/
+|   |-- dl/esil/                   # 原始推理依赖
+|   `-- devin_env/esil/            # 原始预处理及诊断依赖
 |-- inputs/
 |   |-- Trained_model/             # 三个公开 O3 模型权重
 |   |-- Example_data/              # 五个目标日的预处理数组
 |   `-- Matrix_for_Training_Run1-21.csv
 |-- results/                       # 随仓库发布的论文诊断结果
-|-- outputs/                       # 运行后生成，不纳入 Git
-`-- tests/                         # 环境记录、esil 副本、测试日志及对照数据
+`-- outputs/                       # 运行后生成，不纳入 Git
 ```
 
 ## 常见问题

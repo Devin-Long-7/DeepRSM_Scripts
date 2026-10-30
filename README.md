@@ -40,7 +40,7 @@ conda activate deeprsm-example
 python -m pip install torch==2.4.0 numpy==1.24.4 pandas==2.0.3 netCDF4==1.7.1.post2 tqdm pytz
 ```
 
-Coefficient prediction was tested with Python 3.8.19 and PyTorch 2.4.0. Full preprocessing, PR and validation were tested with Python 3.9.21 and additionally require SciPy, Matplotlib, Cartopy, cmaps, scikit-learn and openpyxl. Exact versions are recorded in `tests/environment_dl.txt` and `tests/environment_devin_env.txt`. Set `PY_DL` and `PY_DATA` to the Python executables for these environments when using separate environments. Bundled `esil` copies are selected through `PYTHONPATH` below. Installation into a fresh environment has not been tested.
+Coefficient prediction was tested with Python 3.8.19 and PyTorch 2.4.0. Full preprocessing, PR and validation were tested with Python 3.9.21. The versions used for the data-processing environment were NumPy 2.0.2, pandas 2.2.3, SciPy 1.13.1, Matplotlib 3.9.4, netCDF4 1.7.2, Cartopy 0.23.0, cmaps 2.0.1, scikit-learn 1.6.1 and openpyxl 3.1.5. Set `PY_DL` and `PY_DATA` to the Python executables for these environments when using separate environments. The two original `esil` versions are retained under `dependencies/dl/` and `dependencies/devin_env/`, selected through `PYTHONPATH` below. Installation into a fresh environment has not been tested.
 
 ### 2. Configure Inputs
 
@@ -79,7 +79,7 @@ Retain the original species order, region order, filename patterns and units. Co
 After environment setup, run from the repository root:
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config a_config_example_five_days.ini
 ```
 
@@ -90,7 +90,7 @@ The example was tested on Linux in a separate package directory, launched from o
 ### 3. Preprocess CMAQ Inputs (Full Month)
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
@@ -99,7 +99,7 @@ Outputs go to `outputs/<project_name>/preprocess_npy_data/`. The full-month exam
 ### 4. Build RSMs With The Trained Checkpoint
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config "$CFG"
 ```
 
@@ -108,7 +108,7 @@ Outputs go to `outputs/<project_name>/rsm_weights/`. The full-month configuratio
 ### 5. Calculate PR, VNr And EKMA
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B g_rsm_vnr_pr.py --config "$CFG"
 ```
 
@@ -123,7 +123,7 @@ PR and VNr are dimensionless; peak ozone and EKMA concentrations are in ppb. The
 ### 6. Validate Against CMAQ
 
 ```bash
-export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
+export PYTHONPATH="$DEEPRSM_ROOT/dependencies/devin_env"
 "$PY_DATA" -B f_rsm_performance.py --config "$CFG"
 ```
 
@@ -159,13 +159,15 @@ DeepRSM_Scripts/
 |-- g_rsm_vnr_pr.py                 # PR, VNr and EKMA
 |-- run_pipeline.py                # Original batch entry point
 |-- create_rsm_struct/             # Prediction network and data classes
+|-- dependencies/
+|   |-- dl/esil/                   # Original inference dependency
+|   `-- devin_env/esil/            # Original preprocessing and diagnostics dependency
 |-- inputs/
 |   |-- Trained_model/            # Three released O3 checkpoints
 |   |-- Example_data/              # Five target-day preprocessed arrays
 |   `-- Matrix_for_Training_Run1-21.csv
 |-- results/                       # Bundled study diagnostics
-|-- outputs/                       # Generated on execution; excluded from Git
-`-- tests/                         # Environments, esil copies, logs and reference data
+`-- outputs/                       # Generated on execution; excluded from Git
 ```
 
 ## Troubleshooting
