@@ -1,0 +1,18 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Devin-Long-7
+
+The authors' processed numerical output data in results/ and the numerical
+reference tables and comparisons in tests/ are licensed under CC BY 4.0.
+
+License and full legal terms:
+https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+For attribution, identify Devin-Long-7 and the DeepRSM_Scripts repository,
+retain this license notice, link to the license, and indicate modifications.
+
+This grant excludes raw WRF-CMAQ files, third-party boundary and mask data,
+third-party software, and privately retained training scripts.
+Software, documentation, scenario configurations and the released trained
+checkpoint are covered by LICENSE, except where original third-party terms apply.

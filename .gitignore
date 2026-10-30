@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.env
+.env.*
+training/
+traing_struct/
+*training*.log
+*training*status.json
+changes.patch
+*.tar
+*.tar.gz
+*.tmp

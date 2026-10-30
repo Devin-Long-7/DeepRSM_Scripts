@@ -1,0 +1,158 @@
+{
+  "S5_OOS_overall_by_day.csv": [
+    {
+      "subset": "8 specified / 5 polluted days",
+      "computed": {
+        "N": 248840.0,
+        "R2_resp": 0.9359190181089078,
+        "RMSE_resp_ppbv": 0.525882946274536,
+        "MAE_resp_ppbv": 0.2070054733065353,
+        "MB_resp_ppbv": -0.06101603275981161,
+        "NMB_resp_pct": 6.620507488572764,
+        "mean_abs_CMAQ_delta_ppbv": 1.2281263776424134,
+        "R2_conc": 0.998063437044096,
+        "RMSE_conc_ppbv": 0.5258829462745361,
+        "NMB_conc_pct": -0.07950034807125134,
+        "delta_slope": 0.9468011777964346,
+        "delta_intercept_ppbv": -0.11004522098985015
+      },
+      "max_abs_difference_from_rounded_reference": 2.7640112421067897e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "2022-09-06",
+      "computed": {
+        "N": 49768.0,
+        "R2_resp": 0.8972047968409474,
+        "RMSE_resp_ppbv": 0.7056009904807317,
+        "MAE_resp_ppbv": 0.2893405461287978,
+        "MB_resp_ppbv": -0.08568001405496052,
+        "NMB_resp_pct": 8.341063104816492,
+        "mean_abs_CMAQ_delta_ppbv": 1.3618077147219692,
+        "R2_conc": 0.9967178821312079,
+        "RMSE_conc_ppbv": 0.7056009904807317,
+        "NMB_conc_pct": -0.1133903655910727,
+        "delta_slope": 0.9489127477254082,
+        "delta_intercept_ppbv": -0.13815721555687432
+      },
+      "max_abs_difference_from_rounded_reference": 3.5083047578154947e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "2022-09-13",
+      "computed": {
+        "N": 49768.0,
+        "R2_resp": 0.96627802398085,
+        "RMSE_resp_ppbv": 0.35836116012571806,
+        "MAE_resp_ppbv": 0.1417840461312771,
+        "MB_resp_ppbv": -0.04117699580167519,
+        "NMB_resp_pct": 4.6477465181402335,
+        "mean_abs_CMAQ_delta_ppbv": 1.1113711064928427,
+        "R2_conc": 0.9989002587385871,
+        "RMSE_conc_ppbv": 0.358361160125718,
+        "NMB_conc_pct": -0.05143015155445588,
+        "delta_slope": 0.9567031945800903,
+        "delta_intercept_ppbv": -0.07953606654796375
+      },
+      "max_abs_difference_from_rounded_reference": 2.842615032250251e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "2022-09-14",
+      "computed": {
+        "N": 49768.0,
+        "R2_resp": 0.9646320906315204,
+        "RMSE_resp_ppbv": 0.361477442921574,
+        "MAE_resp_ppbv": 0.15415095355167627,
+        "MB_resp_ppbv": -0.06642633293242561,
+        "NMB_resp_pct": 7.061618036806366,
+        "mean_abs_CMAQ_delta_ppbv": 1.1056081648904628,
+        "R2_conc": 0.9989029653765924,
+        "RMSE_conc_ppbv": 0.36147744292157397,
+        "NMB_conc_pct": -0.07873904647429376,
+        "delta_slope": 1.0077529814502872,
+        "delta_intercept_ppbv": -0.05913335667186592
+      },
+      "max_abs_difference_from_rounded_reference": 3.6335379149932123e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "2022-09-16",
+      "computed": {
+        "N": 49768.0,
+        "R2_resp": 0.9380534377206006,
+        "RMSE_resp_ppbv": 0.5552504796581156,
+        "MAE_resp_ppbv": 0.22052303776694238,
+        "MB_resp_ppbv": -0.054746264852694654,
+        "NMB_resp_pct": 5.614939301999989,
+        "mean_abs_CMAQ_delta_ppbv": 1.3043638493657936,
+        "R2_conc": 0.9976613777010817,
+        "RMSE_conc_ppbv": 0.5552504796581156,
+        "NMB_conc_pct": -0.0741142191130665,
+        "delta_slope": 0.9115672982808838,
+        "delta_intercept_ppbv": -0.14096910448748157
+      },
+      "max_abs_difference_from_rounded_reference": 4.206412995699793e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "2022-09-19",
+      "computed": {
+        "N": 49768.0,
+        "R2_resp": 0.9312528661569694,
+        "RMSE_resp_ppbv": 0.56347125051435,
+        "MAE_resp_ppbv": 0.22922878295398288,
+        "MB_resp_ppbv": -0.057050556157302035,
+        "NMB_resp_pct": 7.32105558720057,
+        "mean_abs_CMAQ_delta_ppbv": 1.2574810527409988,
+        "R2_conc": 0.9958565008762164,
+        "RMSE_conc_ppbv": 0.5634712505143501,
+        "NMB_conc_pct": -0.08162791547000862,
+        "delta_slope": 0.9277187599342195,
+        "delta_intercept_ppbv": -0.11337692735303095
+      },
+      "max_abs_difference_from_rounded_reference": 9.987566329527908e-13,
+      "match_at_1e-9": true
+    }
+  ],
+  "S10_LHS_validation.csv": [
+    {
+      "subset": "5 LHS / all 30 days",
+      "computed": {
+        "N": 933150.0,
+        "R2_resp": 0.8880919180207479,
+        "RMSE_resp_ppbv": 1.5435911436243037,
+        "MAE_resp_ppbv": 0.8450633739099334,
+        "MB_resp_ppbv": -0.5982128845760094,
+        "NMB_resp_pct": 18.916449543593746,
+        "mean_abs_CMAQ_delta_ppbv": 3.7169940851407057,
+        "R2_conc": 0.9883186894486805,
+        "RMSE_conc_ppbv": 1.5435911436243037,
+        "NMB_conc_pct": -0.8947268415902093,
+        "delta_slope": 0.9700623972297864,
+        "delta_intercept_ppbv": -0.6928874146414321
+      },
+      "max_abs_difference_from_rounded_reference": 6.252776074688882e-12,
+      "match_at_1e-9": true
+    },
+    {
+      "subset": "5 LHS / 5 polluted days",
+      "computed": {
+        "N": 155525.0,
+        "R2_resp": 0.8911324583677275,
+        "RMSE_resp_ppbv": 1.5457468632906066,
+        "MAE_resp_ppbv": 0.7801236273696692,
+        "MB_resp_ppbv": -0.5423585484642974,
+        "NMB_resp_pct": 14.91640556726337,
+        "mean_abs_CMAQ_delta_ppbv": 4.017841624738396,
+        "R2_conc": 0.9834704407977263,
+        "RMSE_conc_ppbv": 1.5457468632906064,
+        "NMB_conc_pct": -0.7325702187720173,
+        "delta_slope": 1.0006373901073875,
+        "delta_intercept_ppbv": -0.5400410064003647
+      },
+      "max_abs_difference_from_rounded_reference": 3.6630254385272565e-11,
+      "match_at_1e-9": true
+    }
+  ]
+}

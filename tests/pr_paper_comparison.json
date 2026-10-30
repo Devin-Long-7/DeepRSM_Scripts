@@ -1,0 +1,30 @@
+{
+  "rows": 45,
+  "keys_identical": true,
+  "columns": {
+    "Local_PR": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    },
+    "Local_O3_Max": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    },
+    "Whole_PR": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    },
+    "Whole_O3_Max": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    },
+    "Local_VNr": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    },
+    "Whole_VNr": {
+      "max_abs_difference": 0.0,
+      "match_at_1e-12": true
+    }
+  }
+}
