@@ -14,29 +14,39 @@ The MIT License applies to the authors' released software, accompanying document
 
 **To inspect the study results**, open the PR CSV, EKMA workbook and OOS scatter tables in `results/`. No model execution is required. Large CSVs use `.csv.gz` compression; decompress them or read them directly with pandas.
 
-**To recalculate results**, follow: environment setup → input configuration → preprocessing → RSM construction → PR or validation. Use the trained checkpoint in `inputs/`; no training is required. The commands below target the original Linux server. Large CMAQ inputs are not included in the public package.
+**To run the bundled five-day example**, follow steps 1–2 below and the five-day command after step 2. It uses the supplied `.npy` inputs and checkpoint, without raw CMAQ files or training.
+
+**To recalculate the full-month results**, follow steps 1–6. Large raw CMAQ inputs are not included and must be supplied separately. Commands below use a Linux shell.
 
 ### 1. Set Up The Environment
 
-On the study server, enter the tested copy:
+Clone the repository and enter its root directory:
 
 ```bash
-cd /DeepLearning/mnt/Devin/publication_exports/DeepRSM_original_scripts_20261029
+git clone https://github.com/Devin-Long-7/DeepRSM_Scripts.git
+cd DeepRSM_Scripts
 export DEEPRSM_ROOT="$PWD"
 export PYTHONDONTWRITEBYTECODE=1 MPLBACKEND=Agg
 export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4
-PY_DL=/home/esil/anaconda3/envs/dl/bin/python
-PY_DATA=/home/esil/anaconda3/envs/devin_env/bin/python
+PY_DL=python
+PY_DATA=python
 ```
 
-Coefficient prediction uses `dl`, tested with Python 3.8.19 and PyTorch 2.4.0. Preprocessing, PR and validation use `devin_env`, tested with Python 3.9.21. Main dependencies are NumPy, pandas, SciPy, netCDF4, Matplotlib, Cartopy, cmaps, scikit-learn, openpyxl and the bundled copies of `esil`.
+For the coefficient-prediction example, prepare a Python 3.8 environment with PyTorch 2.4.0, NumPy 1.24.4, pandas 2.0.3, netCDF4 1.7.1.post2, tqdm and pytz. For example:
 
-Exact versions are recorded in `tests/environment_dl.txt` and `tests/environment_devin_env.txt`. On another machine, prepare equivalent environments and replace the two Python paths above. Execution has been verified in the existing study environments; installation into fresh environments has not been tested.
+```bash
+conda create -n deeprsm-example python=3.8 -y
+conda activate deeprsm-example
+python -m pip install torch==2.4.0 numpy==1.24.4 pandas==2.0.3 netCDF4==1.7.1.post2 tqdm pytz
+```
+
+Coefficient prediction was tested with Python 3.8.19 and PyTorch 2.4.0. Full preprocessing, PR and validation were tested with Python 3.9.21 and additionally require SciPy, Matplotlib, Cartopy, cmaps, scikit-learn and openpyxl. Exact versions are recorded in `tests/environment_dl.txt` and `tests/environment_devin_env.txt`. Set `PY_DL` and `PY_DATA` to the Python executables for these environments when using separate environments. Bundled `esil` copies are selected through `PYTHONPATH` below. Installation into a fresh environment has not been tested.
 
 ### 2. Configure Inputs
 
 | Configuration | Purpose |
 | --- | --- |
+| `a_config_example_five_days.ini` | Bundled five-day coefficient-prediction example; no raw CMAQ files required |
 | `a_config_d3_202209_M_devin_0605.ini` | RSM construction, PR/EKMA and five LHS validation scenarios |
 | `a_config_d3_202209_M_devin_8_oos.ini` | Eight specified validation scenarios used in the study OOS scatter table |
 
@@ -46,7 +56,7 @@ Start with:
 CFG=a_config_d3_202209_M_devin_0605.ini
 ```
 
-Check `[input_files]` in the INI. **Update paths when moving the package to another machine or directory. The tested server copy already has its paths configured.**
+All `[input_files]` paths are resolved relative to the INI file, including the checkpoint and output directory. Moving the repository does not require editing these paths. The two full-month configurations expect raw CMAQ files in `inputs/CMAQ/create_rsm/` and `inputs/CMAQ/oos/`; these directories are not bundled. Set those paths to your own data when running preprocessing or validation.
 
 | Parameter | Required input or output |
 | --- | --- |
@@ -60,18 +70,31 @@ Check `[input_files]` in the INI. **Update paths when moving the package to anot
 | `boundary_file` / `boundary_json_file` | `inputs/guangdong_cities.json`; keep `PRD_Cities_117_150.pkl` beside it |
 | `output_dir` | Output root; files are written under its `project_name` subdirectory |
 
-To preserve existing generated results, set `output_dir` in the copied INI to a new run directory before executing. Substitute that directory for `results/` in the output paths below.
+New runs write to `outputs/<project_name>/`; bundled study outputs remain in `results/`. Set `output_dir` in the INI to another directory when needed. Repeating the same run replaces files under that run's output directory.
 
 Retain the original species order, region order, filename patterns and units. Construction files include names such as `D3_base_Daily_ACONC_Sep_2022.nc`; LHS files use names such as `D3_oos1_Daily_ACONC_Sep_2022.nc`; eight-scenario files use the `D3_S` prefix. Names must match the INI and scenario matrices. Network inputs contain baseline and zero-out concentrations for 18 species, giving 36 channels.
 
-### 3. Preprocess CMAQ Inputs
+### Run The Bundled Five-Day Example
+
+After environment setup, run from the repository root:
+
+```bash
+export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+"$PY_DL" -B d_get_equation_item_weight.py --config a_config_example_five_days.ini
+```
+
+No input copying or path editing is needed. The configuration reads `inputs/Example_data/2022_Sep_target_days/` and predicts coefficients for 6, 13, 14, 16 and 19 September 2022. It generates 55 `*Weight_M9_D*.npy` files (5 days × 11 regions) and 5 indirect-term caches in `outputs/example_2022_09_five_days/rsm_weights/`. This example builds RSM coefficients; validation against independent CMAQ simulations requires the additional NetCDF inputs.
+
+The example was tested on Linux in a separate package directory, launched from outside that directory. All 55 coefficient arrays and 5 indirect-term caches were exactly equal to the existing study reproduction outputs (maximum absolute difference: 0).
+
+### 3. Preprocess CMAQ Inputs (Full Month)
 
 ```bash
 export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
-Outputs go to `results/<project_name>/preprocess_npy_data/`. The full-month example produces 390 `.npy` files. A five-day example is included in `inputs/Example_data/2022_Sep_target_days/` for 6, 13, 14, 16 and 19 September.
+Outputs go to `outputs/<project_name>/preprocess_npy_data/`. The full-month example produces 390 `.npy` files. Skip this step for the bundled five-day example.
 
 ### 4. Build RSMs With The Trained Checkpoint
 
@@ -80,7 +103,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config "$CFG"
 ```
 
-Outputs go to `results/<project_name>/rsm_weights/`. Expect 330 `*Weight_M9_D*.npy` coefficient files: 30 days times 11 regions, plus indirect-term caches. The original prediction script uses the CPU; this step does not require a GPU.
+Outputs go to `outputs/<project_name>/rsm_weights/`. The full-month configurations generate 330 `*Weight_M9_D*.npy` coefficient files: 30 days times 11 regions, plus indirect-term caches. The prediction script uses the CPU; this step does not require a GPU. Optional `prediction_days` selects specific dates; omitting it uses all days in the configured month.
 
 ### 5. Calculate PR, VNr And EKMA
 
@@ -91,8 +114,8 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 
 This entry point processes 6, 13, 14, 16 and 19 September and produces:
 
-- `results/<project_name>/<project_name>_PR_O3_Max_Sep_MRSM_20260506.csv`: Local/Whole PR, peak ozone and VNr for 45 city-days.
-- `results/<project_name>/oos/ekma_curve/<project_name>_ekma_curve_data.xlsx`: ozone concentrations for 49 NOx/VOC combinations per day.
+- `outputs/<project_name>/<project_name>_PR_O3_Max_Sep_MRSM_20260506.csv`: Local/Whole PR, peak ozone and VNr for 45 city-days.
+- `outputs/<project_name>/oos/ekma_curve/<project_name>_ekma_curve_data.xlsx`: ozone concentrations for 49 NOx/VOC combinations per day.
 - EKMA figures and PR heatmaps in the EKMA folder and project output directory.
 
 PR and VNr are dimensionless; peak ozone and EKMA concentrations are in ppb. The PR search interval is 0.01 to 2.
@@ -104,7 +127,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B f_rsm_performance.py --config "$CFG"
 ```
 
-Outputs go to `results/<project_name>/oos/`, including `All Days_scatter_data_PRD.csv`, `All Polluted Days_scatter_data_PRD.csv`, summaries and figures. Filenames have the `<project_name>_` prefix. Scatter rows are identified by `Day, Run, Column, Row`; numerical columns are `CMAQ, RSM, CMAQ_Response, RSM_Response`.
+Outputs go to `outputs/<project_name>/oos/`, including `All Days_scatter_data_PRD.csv`, `All Polluted Days_scatter_data_PRD.csv`, summaries and figures. Filenames have the `<project_name>_` prefix. Scatter rows are identified by `Day, Run, Column, Row`; numerical columns are `CMAQ, RSM, CMAQ_Response, RSM_Response`.
 
 **To reproduce the study's eight-scenario validation**, switch the configuration below and repeat steps 3, 4 and 6. The configurations use different `project_name` values and separate output subdirectories.
 
@@ -116,17 +139,18 @@ The complete eight-scenario monthly table contains 1,493,040 rows. Its five-day 
 
 ### Example Five-Day Model Inputs
 
-`inputs/Example_data/2022_Sep_target_days/` contains 65 preprocessed `.npy` arrays for the five common target days. The arrays contain the baseline and regional zero-out 18-species fields required by the inference network. Copy these files into the configured `output_dir/<project_name>/preprocess_npy_data/` directory before running the original coefficient-prediction script. The unmodified script loops over days 1–30, so the five-day package is provided as a compact input example; a full-month input set is required for an unchanged 30-day run.
+`inputs/Example_data/2022_Sep_target_days/` contains 65 preprocessed `.npy` arrays: one baseline and 12 zero-out fields for each of five days, with 18 species per field. The example INI reads this directory directly through `preprocess_npy_dir` and selects the five dates through `prediction_days`. The only modeling entry changes are configurable input paths and date selection; the network and coefficient calculations are unchanged.
 
 ## Directory Structure
 
 ```text
-DeepRSM_original_scripts_20261029/
+DeepRSM_Scripts/
 |-- README.md / README_zh.md
 |-- LICENSE                        # MIT: released software and trained checkpoint
 |-- LICENSE-DATA                   # CC BY 4.0: processed numerical outputs
 |-- a_config_d3_202209_M_devin_0605.ini
 |-- a_config_d3_202209_M_devin_8_oos.ini
+|-- a_config_example_five_days.ini  # Bundled example
 |-- b_input_data_helper.py          # Configuration and input loading
 |-- c_data_preprocess.py            # Preprocessing
 |-- d_get_equation_item_weight.py   # CNN prediction of RSM coefficients
@@ -139,15 +163,16 @@ DeepRSM_original_scripts_20261029/
 |   |-- Trained_model/            # Three released O3 checkpoints
 |   |-- Example_data/              # Five target-day preprocessed arrays
 |   `-- Matrix_for_Training_Run1-21.csv
-|-- results/                       # Bundled diagnostics and new execution outputs
-|-- tests/                         # Environments, esil copies, logs and reference data
+|-- results/                       # Bundled study diagnostics
+|-- outputs/                       # Generated on execution; excluded from Git
+`-- tests/                         # Environments, esil copies, logs and reference data
 ```
 
 ## Troubleshooting
 
 - **Missing NetCDF inputs:** the package includes the checkpoint and processed outputs, but not large raw CMAQ data. Obtain the inputs and configure their paths before recalculating.
 - **`No module named esil`:** check `PYTHONPATH` and select the dependency copy corresponding to the current Python environment.
-- **Outputs in an unexpected directory:** always pass `--config` to modeling, PR and validation scripts. The original default configuration still points to the historical project.
+- **Outputs in an unexpected directory:** pass `--config` explicitly. Relative paths resolve against the INI directory; without `--config`, the bundled `0605.ini` is used.
 - **Monthly summary replaced by a five-day summary:** the original entry point overwrites the summary filenames. Use `All Days` scatter data for monthly analysis and `All Polluted Days` for the five-day subset.
 - **Signed bias differs from SI:** scatter responses use baseline minus scenario; the SI signed bias and intercept use scenario minus baseline. Align the conventions before comparing.
 

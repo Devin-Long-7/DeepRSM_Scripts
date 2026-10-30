@@ -20,6 +20,7 @@ import configparser
 import argparse
 #将字符串转换为相应的Python对象
 import ast
+import calendar
 #获取配置文件的路径
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="配置文件的路径")
@@ -37,14 +38,22 @@ def load_config(config_file):
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_2022_09_D.ini'
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_202209_D_devin.ini'
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_202209_M_devin_8_oos.ini'
-        config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_202209_M_devin.ini'
+        config_file=os.path.join(os.path.dirname(__file__), 'a_config_d3_202209_M_devin_0605.ini')
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_202209_M_PRD_TsingHua.ini'
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_202209_M_devin_2021_PRD_TsingHua.ini'      
         # config_file='/DeepLearning/mnt/Devin/01_deeprsm/03_create_rsm_scripts/a_config_d3_2022_09_M.ini'   
         # config_file='/DeepLearning/mnt/Devin/rsm_vat_scripts/b1_config_prd_2022_09_base_ic.ini'   
         # return 
     # 读取配置文件
-    config.read(config_file)
+    config_file = os.path.abspath(config_file)
+    with open(config_file, encoding='utf-8') as stream:
+        config.read_file(stream)
+    # Resolve paths relative to the INI, independently of the working directory.
+    for key, value in config.items('input_files'):
+        path = ast.literal_eval(value)
+        if not os.path.isabs(path):
+            path = os.path.join(os.path.dirname(config_file), path)
+        config.set('input_files', key, repr(os.path.normpath(path)))
     #加载配置文件中的参数
     year=ast.literal_eval(config.get('input_parameters', 'year'))
     month=ast.literal_eval(config.get('input_parameters', 'month'))
@@ -75,6 +84,8 @@ def load_config(config_file):
     output_dir =ast.literal_eval(config.get('input_files', 'output_dir'))#.replace("#month#",str_month).replace("#year#",str(year))#f'/mnt/Devin/output/prd_{year}_{str_month}_daily_base_ic'
     output_dir=os.path.join(output_dir,project_name)
     output_npy_dir =os.path.join(output_dir,'preprocess_npy_data')
+    if config.has_option('input_files', 'preprocess_npy_dir'):
+        output_npy_dir = ast.literal_eval(config.get('input_files', 'preprocess_npy_dir'))
     output_rsm_weights_dir = os.path.join(output_dir,'rsm_weights')
     output_oos_dir = os.path.join(output_dir,'oos')
     if  not os.path.exists(output_dir):
@@ -94,6 +105,18 @@ def load_config(config_file):
 config_file,year,month,str_month,region_num,species_num,aconc_file_prefix,aconc_file_suffix,species_in_cmaq,base_case_name,target_pollutant_idx,target_pollutant,aconc_dir,oos_aconc_dir,\
            matrix_file,receptor_file_txt,oos_matrix_file,sector_aconc_dir,grid_path,boundary_file,trained_model_file,boundary_json_file,output_dir,output_npy_dir,output_rsm_weights_dir,\
            output_oos_dir,whole_region_full_control_case_name,aconc_files,aconc_cases,all_aconc_files,project_name,unit,oos_aconc_file_prefix,oos_aconc_file_suffix,oth_region_name=load_config(config_file)
+
+with open(config_file, encoding='utf-8') as stream:
+    _prediction_config = configparser.ConfigParser()
+    _prediction_config.read_file(stream)
+prediction_days = ast.literal_eval(_prediction_config.get(
+    'input_parameters', 'prediction_days',
+    fallback=repr(list(range(1, calendar.monthrange(year, month)[1] + 1)))))
+if (not isinstance(prediction_days, list) or not prediction_days
+        or any(type(day) is not int or not 1 <= day <= calendar.monthrange(year, month)[1]
+               for day in prediction_days)
+        or len(set(prediction_days)) != len(prediction_days)):
+    raise ValueError('prediction_days must be a nonempty list of unique valid days.')
 
 
 def read_receptor_file(receptor_file,region_num):
@@ -323,4 +346,4 @@ if __name__ == '__main__':
     # print(data.shape,regionCell,controlmatrix.shape)
         
         
-       
+

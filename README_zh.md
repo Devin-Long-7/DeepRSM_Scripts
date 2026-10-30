@@ -14,29 +14,39 @@
 
 **只查看论文结果**：直接打开 `results/` 中的 PR CSV、EKMA Excel 和 OOS 散点表，无需运行模型。大型 CSV 已压缩为 `.csv.gz`，解压后即可读取，也可由 pandas 直接读取。
 
-**重新计算结果**：依次执行“准备环境 → 检查配置与数据 → 预处理 → 构建 RSM → PR 或校验”。使用 `inputs/` 中的已训练权重，无需重新训练。下列命令适用于原 Linux 服务器；公开包未包含运行所需的大型 CMAQ 输入。
+**运行随仓库提供的五日案例**：完成下方步骤 1–2 后，执行“五日案例”命令。案例直接使用已提供的 `.npy` 和模型，无需原始 CMAQ 文件或重新训练。
+
+**复算完整月份结果**：依次执行步骤 1–6，需要另外准备未随仓库提供的大型原始 CMAQ 输入。下列命令使用 Linux shell。
 
 ### 1. 准备环境
 
-在原服务器进入已经测试过的副本目录：
+克隆仓库并进入根目录：
 
 ```bash
-cd /DeepLearning/mnt/Devin/publication_exports/DeepRSM_original_scripts_20261029
+git clone https://github.com/Devin-Long-7/DeepRSM_Scripts.git
+cd DeepRSM_Scripts
 export DEEPRSM_ROOT="$PWD"
 export PYTHONDONTWRITEBYTECODE=1 MPLBACKEND=Agg
 export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4
-PY_DL=/home/esil/anaconda3/envs/dl/bin/python
-PY_DATA=/home/esil/anaconda3/envs/devin_env/bin/python
+PY_DL=python
+PY_DATA=python
 ```
 
-`dl` 用于系数预测，已测试 Python 3.8.19、PyTorch 2.4.0。`devin_env` 用于预处理、PR 和校验，已测试 Python 3.9.21。主要依赖为 NumPy、pandas、SciPy、netCDF4、Matplotlib、Cartopy、cmaps、scikit-learn、openpyxl，以及随本目录提供的 `esil`。
+五日系数预测案例需要 Python 3.8 环境，以及 PyTorch 2.4.0、NumPy 1.24.4、pandas 2.0.3、netCDF4 1.7.1.post2、tqdm 和 pytz。例如：
 
-完整版本见 `tests/environment_dl.txt`、`tests/environment_devin_env.txt`。迁移到其他机器时，需先准备相应环境，将上述两个 Python 路径换成本机路径；目前验证的是原服务器已有环境，尚未验证全新环境安装。
+```bash
+conda create -n deeprsm-example python=3.8 -y
+conda activate deeprsm-example
+python -m pip install torch==2.4.0 numpy==1.24.4 pandas==2.0.3 netCDF4==1.7.1.post2 tqdm pytz
+```
+
+系数预测已测试 Python 3.8.19、PyTorch 2.4.0。完整预处理、PR 和校验已测试 Python 3.9.21，还需要 SciPy、Matplotlib、Cartopy、cmaps、scikit-learn 和 openpyxl。完整版本见 `tests/environment_dl.txt`、`tests/environment_devin_env.txt`。如使用两个独立环境，将 `PY_DL` 和 `PY_DATA` 分别设为对应环境的 Python 路径。随仓库提供的 `esil` 通过下方 `PYTHONPATH` 选择。尚未验证全新环境安装。
 
 ### 2. 检查配置与输入
 
 | 配置 | 用途 |
 | --- | --- |
+| `a_config_example_five_days.ini` | 随仓库提供的五日系数预测案例，无需原始 CMAQ 文件 |
 | `a_config_d3_202209_M_devin_0605.ini` | 构建 RSM、计算 PR/EKMA、5 个 LHS 情景校验 |
 | `a_config_d3_202209_M_devin_8_oos.ini` | 8 个指定情景校验，对应论文 OOS 散点数据 |
 
@@ -46,7 +56,7 @@ PY_DATA=/home/esil/anaconda3/envs/devin_env/bin/python
 CFG=a_config_d3_202209_M_devin_0605.ini
 ```
 
-检查 INI 的 `[input_files]`，路径需要指向实际存在的文件。**换机器或换目录后必须调整路径；原服务器的测试副本可直接使用现有配置。**
+`[input_files]` 中所有相对路径均以 **INI 文件所在目录** 为基准解析，包括模型及输出路径。整体移动仓库无需修改这些路径。两份全月配置预期从 `inputs/CMAQ/create_rsm/`、`inputs/CMAQ/oos/` 读取原始 CMAQ 数据，这些目录未随仓库提供；运行预处理或独立校验时需自行放入数据或修改对应路径。
 
 | 参数 | 需要的输入或输出 |
 | --- | --- |
@@ -60,18 +70,31 @@ CFG=a_config_d3_202209_M_devin_0605.ini
 | `boundary_file` / `boundary_json_file` | `inputs/guangdong_cities.json`，同目录保留 `PRD_Cities_117_150.pkl` |
 | `output_dir` | 本次计算的输出根目录，结果写入其下的 `project_name` 子目录 |
 
-如需保留已生成的结果，在副本 INI 中将 `output_dir` 指向新的运行目录，再执行下列命令。文中的 `results/<project_name>/` 也应替换为该目录。
+新计算结果写入 `outputs/<project_name>/`，随仓库发布的论文结果保留在 `results/`。可在 INI 中修改 `output_dir`。重复运行同一配置会替换该运行目录下的同名输出。
 
 保留原配置中的物种顺序、区域顺序、文件前后缀和单位。原建模输入名形如 `D3_base_Daily_ACONC_Sep_2022.nc`，LHS 校验名形如 `D3_oos1_Daily_ACONC_Sep_2022.nc`，8 情景校验前缀为 `D3_S`；文件名必须与配置及矩阵情景对应。模型输入为 18 个物种的基准及置零浓度，共 36 通道。
 
-### 3. 预处理 CMAQ 输入
+### 运行随仓库提供的五日案例
+
+完成环境设置后，在仓库根目录执行：
+
+```bash
+export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
+"$PY_DL" -B d_get_equation_item_weight.py --config a_config_example_five_days.ini
+```
+
+无需复制输入或修改路径。配置直接读取 `inputs/Example_data/2022_Sep_target_days/`，预测 2022 年 9 月 6、13、14、16、19 日的系数，在 `outputs/example_2022_09_five_days/rsm_weights/` 生成 55 个 `*Weight_M9_D*.npy` 文件（5 日 × 11 区域）及 5 个间接项缓存。此案例用于构建 RSM 系数；与独立 CMAQ 情景进行校验仍需要额外的 NetCDF 输入。
+
+该案例已在 Linux 的独立副本中实测，并从副本目录外启动。生成的 55 个系数数组及 5 个间接项缓存均与已有论文复算输出逐数组完全一致，最大绝对差为 0。
+
+### 3. 预处理 CMAQ 输入（完整月份）
 
 ```bash
 export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
-输出到 `results/<project_name>/preprocess_npy_data/`。本示例全月生成 390 个 `.npy` 文件。`inputs/Example_data/2022_Sep_target_days/` 另提供 9 月 6、13、14、16、19 日的 5 日案例数据。
+输出到 `outputs/<project_name>/preprocess_npy_data/`。本示例全月生成 390 个 `.npy` 文件。运行随仓库提供的五日案例时跳过此步骤。
 
 ### 4. 使用已训练权重构建 RSM
 
@@ -80,7 +103,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_dl"
 "$PY_DL" -B d_get_equation_item_weight.py --config "$CFG"
 ```
 
-输出到 `results/<project_name>/rsm_weights/`。应生成 30 天 × 11 区域，共 330 个 `*Weight_M9_D*.npy` 系数文件，另有间接项缓存。原脚本在 CPU 上执行系数预测，此步骤不要求 GPU。
+输出到 `outputs/<project_name>/rsm_weights/`。全月配置应生成 30 天 × 11 区域，共 330 个 `*Weight_M9_D*.npy` 系数文件，另有间接项缓存。脚本在 CPU 上执行系数预测，不要求 GPU。可选参数 `prediction_days` 用于选择日期；未设置时处理配置月份的全部日期。
 
 ### 5. 计算 PR、VNr 和 EKMA
 
@@ -91,8 +114,8 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 
 该入口计算 9 月 6、13、14、16、19 日，并生成：
 
-- `results/<project_name>/<project_name>_PR_O3_Max_Sep_MRSM_20260506.csv`：45 个城市日的 Local/Whole PR、臭氧峰值和 VNr。
-- `results/<project_name>/oos/ekma_curve/<project_name>_ekma_curve_data.xlsx`：每日 49 个 NOx/VOC 组合的臭氧浓度。
+- `outputs/<project_name>/<project_name>_PR_O3_Max_Sep_MRSM_20260506.csv`：45 个城市日的 Local/Whole PR、臭氧峰值和 VNr。
+- `outputs/<project_name>/oos/ekma_curve/<project_name>_ekma_curve_data.xlsx`：每日 49 个 NOx/VOC 组合的臭氧浓度。
 - 同目录及项目根目录下的 EKMA 图与 PR 热图。
 
 PR 与 VNr 无量纲，臭氧峰值及 EKMA 浓度单位为 ppb。PR 搜索范围为 0.01 至 2。
@@ -104,7 +127,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B f_rsm_performance.py --config "$CFG"
 ```
 
-输出到 `results/<project_name>/oos/`，包括全月 `All Days_scatter_data_PRD.csv`、五日 `All Polluted Days_scatter_data_PRD.csv`、统计汇总及图件，文件名均带有 `<project_name>_` 前缀。散点表按 `Day, Run, Column, Row` 标识样本，数值列为 `CMAQ, RSM, CMAQ_Response, RSM_Response`。
+输出到 `outputs/<project_name>/oos/`，包括全月 `All Days_scatter_data_PRD.csv`、五日 `All Polluted Days_scatter_data_PRD.csv`、统计汇总及图件，文件名均带有 `<project_name>_` 前缀。散点表按 `Day, Run, Column, Row` 标识样本，数值列为 `CMAQ, RSM, CMAQ_Response, RSM_Response`。
 
 **复算论文的 8 情景校验**：将 `CFG` 换为下列配置，然后重复步骤 3、4、6。两份配置的 `project_name` 不同，分别输出到不同子目录。
 
@@ -116,17 +139,18 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 
 ### 五日案例数据
 
-`inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组，对应 5 个共同目标日。数组包含推理网络所需的基准及区域置零 18 物种场数据。使用原系数预测脚本前，将这些文件复制到配置的 `output_dir/<project_name>/preprocess_npy_data/`。原脚本未改写，默认循环 1–30 日，因此这套五日数据作为精简案例输入；若直接运行未修改的 30 日入口，需要完整月份的输入数组。
+`inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组：5 个目标日各包含 1 个基准和 12 个置零场，每个场含 18 个物种。案例 INI 通过 `preprocess_npy_dir` 直接指定该输入目录，通过 `prediction_days` 选择五个日期。建模入口仅增加输入路径和日期选择支持，网络及系数计算方法保持原样。
 
 ## 目录结构
 
 ```text
-DeepRSM_original_scripts_20261029/
+DeepRSM_Scripts/
 |-- README.md / README_zh.md
 |-- LICENSE                        # MIT：公开代码和已训练权重
 |-- LICENSE-DATA                   # CC BY 4.0：处理后数值输出
 |-- a_config_d3_202209_M_devin_0605.ini
 |-- a_config_d3_202209_M_devin_8_oos.ini
+|-- a_config_example_five_days.ini  # 随仓库提供的案例
 |-- b_input_data_helper.py          # 配置及输入读取
 |-- c_data_preprocess.py            # 预处理
 |-- d_get_equation_item_weight.py   # CNN 预测 RSM 系数
@@ -139,15 +163,16 @@ DeepRSM_original_scripts_20261029/
 |   |-- Trained_model/             # 三个公开 O3 模型权重
 |   |-- Example_data/              # 五个目标日的预处理数组
 |   `-- Matrix_for_Training_Run1-21.csv
-|-- results/                       # 已打包诊断结果及新运行输出
-|-- tests/                         # 环境记录、esil 副本、测试日志及对照数据
+|-- results/                       # 随仓库发布的论文诊断结果
+|-- outputs/                       # 运行后生成，不纳入 Git
+`-- tests/                         # 环境记录、esil 副本、测试日志及对照数据
 ```
 
 ## 常见问题
 
 - **缺少 NetCDF 文件**：本目录包含权重和处理后结果，不包含大型原始 CMAQ 数据。重新计算前需取得数据并设置 INI 路径。
 - **`No module named esil`**：检查 `PYTHONPATH`，并按步骤切换至当前 Python 环境对应的依赖副本。
-- **结果写到了意外位置**：所有建模、PR 和校验命令都应显式传入 `--config`。原默认配置仍指向历史项目。
+- **结果写到了意外位置**：显式传入 `--config`。相对路径以 INI 所在目录为基准；未传配置时使用仓库内的 `0605.ini`。
 - **全月汇总变成五日汇总**：原校验入口会覆盖同名汇总文件；全月分析使用 `All Days` 散点表，五日分析使用 `All Polluted Days`。
 - **响应偏差符号与 SI 不同**：散点表响应采用“基准减情景”，SI 的有符号偏差和截距采用“情景减基准”，比较时需统一符号。
 

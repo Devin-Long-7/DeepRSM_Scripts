@@ -9,7 +9,7 @@ from create_rsm_struct.PM25ResNet import PM25ResNet
 import sys;
 from tqdm.auto import tqdm
 from esil.date_helper import get_hour_of_month
-from b_input_data_helper import year,month,output_npy_dir,output_rsm_weights_dir,trained_model_file,target_pollutant,aconc_cases,whole_region_full_control_case_name,base_case_name,receptor_file_txt,read_receptor_file_txt,config_file
+from b_input_data_helper import year,month,output_npy_dir,output_rsm_weights_dir,trained_model_file,target_pollutant,aconc_cases,whole_region_full_control_case_name,base_case_name,receptor_file_txt,read_receptor_file_txt,config_file,prediction_days
 print(f"config_file:{config_file}")
 # 使用列表推导式剔除包含特定字符串的元素
 # cases_without_base = [name for name in aconc_cases if 'base' not in name]
@@ -18,7 +18,7 @@ _,dict_receptor=read_receptor_file_txt(receptor_file_txt)
 cases_without_base=[whole_region_full_control_case_name]+list(dict_receptor.values())
 script_file=os.path.abspath(__file__)
 sys.argv = [f'{script_file}', output_rsm_weights_dir, output_npy_dir, base_case_name,",".join(cases_without_base),
-            target_pollutant,f'{year}',f'{month}',",".join([str(x) for x in range(1, 31)]),trained_model_file,",".join([str(x) for x in range(0, 25)])]
+            target_pollutant,f'{year}',f'{month}',",".join(str(day) for day in prediction_days),trained_model_file,",".join([str(x) for x in range(0, 25)])]
 
 # 编辑输入信息：----------------------------------------------------------------------------------------
 OutputPath = sys.argv[1]   #'E:/DeepRSM_PRD_CY/PRD/Project/O3/out/'
