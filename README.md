@@ -6,7 +6,7 @@ Use the trained Daily DeepRSM model to build daily response surfaces from baseli
 
 ## Public Release And License
 
-The public release includes the trained model, preprocessing and RSM construction code, PR/VNr/EKMA diagnostic code, validation code, scenario configuration files and processed outputs. Training scripts and the training workflow are not included in the public release. The network definition needed to load the trained model is included in `create_rsm_struct/`.
+The public release includes the trained model, preprocessing and RSM construction code, PR/VNr/EKMA diagnostic code, validation code, scenario configuration files and processed outputs. Training scripts and the training workflow are not included in the public release. The training scripts are available from the corresponding author upon reasonable request. The network definition needed to load the trained model is included in `create_rsm_struct/`.
 
 The MIT License applies to the authors' released software, accompanying documentation, scenario configurations and trained model checkpoint; see `LICENSE` in the public repository. Training scripts retained privately are outside this public license grant. Processed numerical output data are provided under CC BY 4.0; see `LICENSE-DATA`. Third-party material retains its applicable original terms and notices; the repository license does not override those terms.
 
@@ -52,7 +52,7 @@ Check `[input_files]` in the INI. **Update paths when moving the package to anot
 | --- | --- |
 | `aconc_dir` | Daily CMAQ baseline, whole-domain zero-out and regional zero-out NetCDF files; not bundled |
 | `oos_aconc_dir` | Daily independent CMAQ validation scenarios; needed only for validation, not bundled |
-| `trained_model_file` | `inputs/2022Sep_subregion_Model_14710_O3_Final.pth` |
+| `trained_model_file` | `inputs/Trained_model/2022_Sep_Fine-tuned_DeepRSM_model_O3.pth` |
 | `matrix_file` | `inputs/Matrix_for_CreateRSM_D2_2022_deeprsm.csv` |
 | `oos_matrix_file` | `Matrix_for_OOS_D2_2022_final_city.csv` for LHS, or `Matrix_for_OOS_8_Specified_Runs.csv` for eight scenarios; both in `inputs/` |
 | `receptor_file_txt` / `region_file_csv` | `inputs/d3_117150_prd_grid_receptor.txt` / `.csv` |
@@ -71,7 +71,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
-Outputs go to `results/<project_name>/preprocess_npy_data/`. The full-month example produces 390 `.npy` files.
+Outputs go to `results/<project_name>/preprocess_npy_data/`. The full-month example produces 390 `.npy` files. A five-day example is included in `inputs/Example_data/2022_Sep_target_days/` for 6, 13, 14, 16 and 19 September.
 
 ### 4. Build RSMs With The Trained Checkpoint
 
@@ -114,6 +114,10 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 
 The complete eight-scenario monthly table contains 1,493,040 rows. Its five-day response subset gives squared Pearson correlation approximately 0.935919 and RMSE 0.525883 ppb. The five LHS scenarios contain 933,150 monthly rows, with corresponding metrics of approximately 0.888092 and 1.543591 ppb.
 
+### Example Five-Day Model Inputs
+
+`inputs/Example_data/2022_Sep_target_days/` contains 65 preprocessed `.npy` arrays for the five common target days. The arrays contain the baseline and regional zero-out 18-species fields required by the inference network. Copy these files into the configured `output_dir/<project_name>/preprocess_npy_data/` directory before running the original coefficient-prediction script. The unmodified script loops over days 1–30, so the five-day package is provided as a compact input example; a full-month input set is required for an unchanged 30-day run.
+
 ## Directory Structure
 
 ```text
@@ -131,10 +135,12 @@ DeepRSM_original_scripts_20261029/
 |-- g_rsm_vnr_pr.py                 # PR, VNr and EKMA
 |-- run_pipeline.py                # Original batch entry point
 |-- create_rsm_struct/             # Prediction network and data classes
-|-- inputs/                        # Checkpoint, matrices, grid, boundaries and masks
+|-- inputs/
+|   |-- Trained_model/            # Three released O3 checkpoints
+|   |-- Example_data/              # Five target-day preprocessed arrays
+|   `-- Matrix_for_Training_Run1-21.csv
 |-- results/                       # Bundled diagnostics and new execution outputs
 |-- tests/                         # Environments, esil copies, logs and reference data
-`-- docs/                          # Verification and source provenance
 ```
 
 ## Troubleshooting
@@ -145,4 +151,4 @@ DeepRSM_original_scripts_20261029/
 - **Monthly summary replaced by a five-day summary:** the original entry point overwrites the summary filenames. Use `All Days` scatter data for monthly analysis and `All Polluted Days` for the five-day subset.
 - **Signed bias differs from SI:** scatter responses use baseline minus scenario; the SI signed bias and intercept use scenario minus baseline. Align the conventions before comparing.
 
-Execution results and numerical comparisons are documented in the [verification record](docs/VERIFICATION.md). Large raw WRF-CMAQ output files are available from the corresponding author upon reasonable request due to their size. The public repository is https://github.com/Devin-Long-7/DeepRSM_Scripts. A Zenodo archival DOI has not yet been assigned.
+Large raw WRF-CMAQ output files are available from the corresponding author upon reasonable request due to their size. The public repository is https://github.com/Devin-Long-7/DeepRSM_Scripts. A Zenodo archival DOI has not yet been assigned.

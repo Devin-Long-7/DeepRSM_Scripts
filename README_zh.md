@@ -6,7 +6,7 @@
 
 ## 公开范围与许可证
 
-公开发布内容包括已训练模型、预处理和 RSM 构建代码、PR/VNr/EKMA 诊断代码、校验代码、情景配置文件及处理后结果。训练脚本和训练流程不纳入公开发布。加载已训练模型所需的网络结构定义保留在 `create_rsm_struct/`。
+公开发布内容包括已训练模型、预处理和 RSM 构建代码、PR/VNr/EKMA 诊断代码、校验代码、情景配置文件及处理后结果。训练脚本和训练流程不纳入公开发布。训练脚本可向通讯作者提出合理请求获取。加载已训练模型所需的网络结构定义保留在 `create_rsm_struct/`。
 
 作者公开的软件代码、配套文档、情景配置及已训练模型权重采用 MIT License，见公开仓库中的 `LICENSE`。私下保留的训练脚本不属于本次公开许可的授权范围。处理后的数值输出数据采用 CC BY 4.0，见 `LICENSE-DATA`。第三方材料保留其适用的原许可和声明，仓库许可证不替代第三方条款。
 
@@ -52,7 +52,7 @@ CFG=a_config_d3_202209_M_devin_0605.ini
 | --- | --- |
 | `aconc_dir` | CMAQ 基准、全域置零及各区域置零的日浓度 NetCDF，未打包 |
 | `oos_aconc_dir` | 独立校验情景的日浓度 NetCDF，仅校验步骤需要，未打包 |
-| `trained_model_file` | `inputs/2022Sep_subregion_Model_14710_O3_Final.pth` |
+| `trained_model_file` | `inputs/Trained_model/2022_Sep_Fine-tuned_DeepRSM_model_O3.pth` |
 | `matrix_file` | `inputs/Matrix_for_CreateRSM_D2_2022_deeprsm.csv` |
 | `oos_matrix_file` | LHS 配置用 `Matrix_for_OOS_D2_2022_final_city.csv`，8 情景配置用 `Matrix_for_OOS_8_Specified_Runs.csv`，均在 `inputs/` |
 | `receptor_file_txt` / `region_file_csv` | `inputs/d3_117150_prd_grid_receptor.txt` / `.csv` |
@@ -71,7 +71,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/tests/dependencies_devin_env"
 "$PY_DATA" -B c_data_preprocess.py --config "$CFG"
 ```
 
-输出到 `results/<project_name>/preprocess_npy_data/`。本示例全月生成 390 个 `.npy` 文件。
+输出到 `results/<project_name>/preprocess_npy_data/`。本示例全月生成 390 个 `.npy` 文件。`inputs/Example_data/2022_Sep_target_days/` 另提供 9 月 6、13、14、16、19 日的 5 日案例数据。
 
 ### 4. 使用已训练权重构建 RSM
 
@@ -114,6 +114,10 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 
 完整 8 情景全月表应有 1,493,040 行。五日子集的响应 Pearson 相关系数平方约为 0.935919，RMSE 约为 0.525883 ppb。5 个 LHS 情景全月表应有 933,150 行，其对应指标约为 0.888092 和 1.543591 ppb。
 
+### 五日案例数据
+
+`inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组，对应 5 个共同目标日。数组包含推理网络所需的基准及区域置零 18 物种场数据。使用原系数预测脚本前，将这些文件复制到配置的 `output_dir/<project_name>/preprocess_npy_data/`。原脚本未改写，默认循环 1–30 日，因此这套五日数据作为精简案例输入；若直接运行未修改的 30 日入口，需要完整月份的输入数组。
+
 ## 目录结构
 
 ```text
@@ -131,10 +135,12 @@ DeepRSM_original_scripts_20261029/
 |-- g_rsm_vnr_pr.py                 # PR、VNr、EKMA
 |-- run_pipeline.py                # 原批处理入口
 |-- create_rsm_struct/             # 建模网络与数据类
-|-- inputs/                        # 权重、矩阵、网格、边界及掩膜
+|-- inputs/
+|   |-- Trained_model/             # 三个公开 O3 模型权重
+|   |-- Example_data/              # 五个目标日的预处理数组
+|   `-- Matrix_for_Training_Run1-21.csv
 |-- results/                       # 已打包诊断结果及新运行输出
 |-- tests/                         # 环境记录、esil 副本、测试日志及对照数据
-`-- docs/                          # 中英文核验记录与脚本来源
 ```
 
 ## 常见问题
@@ -145,4 +151,4 @@ DeepRSM_original_scripts_20261029/
 - **全月汇总变成五日汇总**：原校验入口会覆盖同名汇总文件；全月分析使用 `All Days` 散点表，五日分析使用 `All Polluted Days`。
 - **响应偏差符号与 SI 不同**：散点表响应采用“基准减情景”，SI 的有符号偏差和截距采用“情景减基准”，比较时需统一符号。
 
-原脚本运行及论文逐值核对结果见 [核验记录](docs/VERIFICATION_zh.md)。大型原始 WRF-CMAQ 输出因文件体积较大，可向通讯作者提出合理请求获取。公开仓库为 https://github.com/Devin-Long-7/DeepRSM_Scripts，目前尚未分配 Zenodo 存档 DOI。
+大型原始 WRF-CMAQ 输出因文件体积较大，可向通讯作者提出合理请求获取。公开仓库为 https://github.com/Devin-Long-7/DeepRSM_Scripts，目前尚未分配 Zenodo 存档 DOI。
