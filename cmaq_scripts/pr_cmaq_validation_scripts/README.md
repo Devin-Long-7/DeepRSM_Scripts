@@ -17,7 +17,7 @@ pr_cmaq_validation_scripts/
 `-- .gitignore
 ```
 
-依赖同级 `../lead-time_experiments/` 中的九月模板、基准 NML 和 `post_scripts/`，这些现已包含于共享包。还需计算节点的 CMAQ/MPI、COMBINE、NCO、baseline UTC00 CGRID、气象/排放/BC，以及 Python、NumPy、xarray、netCDF4 等依赖。
+依赖同级 `../lead-time_experiments/` 中的九月模板、基准 NML 和 `post_scripts/`，需保持相对目录结构。还需计算节点的 CMAQ/MPI、COMBINE、NCO、baseline UTC00 CGRID、气象/排放/BC，以及 Python、NumPy、xarray、netCDF4 等依赖。
 
 ## 配置与命令
 
@@ -41,4 +41,4 @@ csh batch_run_pr_validation.csh --run-and-post
 
 运行时创建 `generated/`，包含 NML、脚本和 Tab 分隔 manifest；原始输出写入 `segment_root`，后处理写入 `post_root`，生成 COMBINE、提取和 daily NetCDF，以及 `pr_validation_summary.csv`。
 
-以相同日期、受体和空间平均口径比较区域平均 O3 MDA8（ppbv）随 NOx 因子的曲线。最大值对应离散扫描的 PR 近似；若峰值在端点应扩大范围，不能声称已找到内部最优值。本文档未重新运行直接 CMAQ 校验。
+以相同日期、受体和空间平均口径比较区域平均 O3 MDA8（ppbv）随 NOx 因子的曲线。最大值对应离散扫描的 PR 近似；若峰值在端点应扩大范围，以确认是否存在内部最优值。

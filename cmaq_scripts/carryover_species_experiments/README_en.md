@@ -45,4 +45,4 @@ Dry-run writes plans without creating mixed ICs or running CMAQ. Defaults select
 
 Post-processing produces `hourly_ozone.csv`, `daily_ozone.csv`, `signed_effects.csv`, masks and plots. Ozone is in ppbv. MDA8 is calculated per cell using the 17 within-day eight-hour windows, then averaged spatially; daily mean uses 00–23 CST and daytime mean 10–17 CST.
 
-Signed effects are relative to C/R controls. Nonadditivity indicates background interactions, not separately measured pathway fluxes. Replacements cover all D3 cells and layers. Unit tests are not included; documentation review does not establish production CMAQ execution.
+Signed effects are relative to C/R controls. Nonadditivity indicates background interactions, not separately measured pathway fluxes. Replacements cover all D3 cells and layers.

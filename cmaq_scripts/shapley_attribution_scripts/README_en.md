@@ -29,7 +29,7 @@ shapley_attribution_scripts/
 `-- .gitignore
 ```
 
-The local `post/` files are included. Shared namelists and COMBINE templates/definitions reside two levels above in `cctm_scripts_v5.3.2/` and `post_scripts_v5.3.2/`; retain this relative layout. The historical description does not imply historical datasets are included.
+`IC-RB00_scripts/post/` provides restart-time checks and postprocessing entries. Shared namelists and COMBINE templates/definitions reside two levels above that script directory in `cctm_scripts_v5.3.2/` and `post_scripts_v5.3.2/`; retain this relative layout. `IC-RB08_scripts/CMAQ_ic_only_c10_files_description.md` describes UTC00 result naming and layout; the corresponding raw model outputs must be supplied separately.
 
 ## Simulation
 
@@ -43,7 +43,7 @@ csh run_cst00_shapley.csh --dry-run
 csh run_cst00_shapley.csh
 ```
 
-Segment 1 covers preceding-day UTC16–24; segment 2 target-day UTC00–16. Runtime creates `generated/`; each case writes raw outputs and daily `post/` products to configured roots. Review external inputs and cleanup before use. These simulations were not executed for this documentation update.
+Segment 1 covers preceding-day UTC16–24; segment 2 target-day UTC00–16. Runtime creates `generated/`; each case writes raw outputs and daily `post/` products to configured roots. Review external inputs and cleanup before use.
 
 ## Attribution
 
@@ -64,4 +64,4 @@ same_day_Shapley = 0.5 * ((C00 - C01) + (C10 - C11))
 carryover_Shapley = 0.5 * ((C00 - C10) + (C01 - C11))
 ```
 
-The components must sum to total. Zero total gives NaN HDF; interpret percentages cautiously for small totals. No `tests/` directory is bundled, and no test-pass claim is made.
+The components must sum to total. Zero total gives NaN HDF; interpret percentages cautiously for small totals.

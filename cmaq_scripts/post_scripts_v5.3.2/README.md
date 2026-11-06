@@ -55,7 +55,7 @@ python 7_plot_daily_map.py /data/Daily_COMBINE.nc /data/Daily_BASE.nc \
   2022-09-06 2022-09-06 O3_MDA8 D3 base /data/boundary.shp
 ```
 
-转换器在输入同目录生成 `Daily_<原文件名>`；输出已存在时默认跳过。`8` 为传给 `esil` 的小时偏移，输入需覆盖所选本地日；不要对已经平移的时间重复加偏移。具体日指标由 `esil.netcdf_helper.convert_hr2daily_data` 实现，不能仅凭本脚本确认完整统计规则。绘图需时间、网格一致的基准文件及边界数据。
+转换器在输入同目录生成 `Daily_<原文件名>`；输出已存在时默认跳过。`8` 为传给 `esil` 的小时偏移，输入需覆盖所选本地日；不要对已经平移的时间重复加偏移。日指标的时间窗及缺失值处理由 `esil.netcdf_helper.convert_hr2daily_data` 实现，使用前应核对所安装版本的统计规则。绘图需时间、网格一致的基准文件及边界数据。
 
 ## 检查输出
 

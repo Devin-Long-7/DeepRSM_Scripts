@@ -30,7 +30,7 @@ IC-RB-CST00_scripts/
 
 检查日期、`BASELINE_CGRID_ROOT`、CMAQ/MPI、气象、BC、排放、掩膜、NML 和输出目录。baseline CGRID 内部时间必须为前一日 UTC16，不能仅凭文件名判定。
 
-默认配置引用同级 `../cctm_scripts_v5.3.2/`（NML 与生成器）、`../post_scripts_v5.3.2/`（COMBINE 模板与物种定义），现均随共享包提供，需保持相对层级。目录内的 `post/` 是调度及校验包装器。CMAQ/COMBINE 可执行程序及气象、排放等大数据仍需在计算节点配置；还需要 csh、GNU 工具、Python、NetCDF/NCO 和匹配的 MPI 环境。
+默认配置引用同级 `../cctm_scripts_v5.3.2/`（NML 与生成器）、`../post_scripts_v5.3.2/`（COMBINE 模板与物种定义），需保持相对层级。目录内的 `post/` 是调度及校验包装器。CMAQ/COMBINE 可执行程序及气象、排放等大数据需在计算节点配置；还需要 csh、GNU 工具、Python、NetCDF/NCO 和匹配的 MPI 环境。
 
 ## 使用方法
 
@@ -49,4 +49,4 @@ csh run_manager.csh run_configs/cctm_config_D3_150X117_202209.csh --dry-run
 
 运行时创建 `generated/` 保存脚本、清单和日志；CMAQ 结果写入 `OUTDIR_BASE`。seg01 为前日 UTC16–24，seg02 接续目标日 UTC00–16，不能将单个分段作为完整日。
 
-后处理拼接小时与 CST 日产品，校验重启时刻和日覆盖。`CLEANUP_CCTM_OUTPUT` 等参数控制中间输出清理，运行前需核对。本共享目录不含额外的 CST40 批处理或测试脚本；本次仅核对文档与源码。
+后处理拼接小时与 CST 日产品，校验重启时刻和日覆盖。`CLEANUP_CCTM_OUTPUT` 等参数控制中间输出清理，运行前需核对。

@@ -35,4 +35,4 @@ csh launch_isam_5days.csh
 
 单日输出默认写入配置的 `isam_daily/D3/2022/<month>/` 树。`ISAM_NEW_START=Y` 且清除 `ISAM_PREVDAY`，各日标签独立。检查 SA_ACONC、SA_CGRID、结束日志、浓度单位和标签总和。
 
-UTC00–24 对应 CST08 至次日 CST08，不能当作同日期 CST 自然日 MDA8。本目录没有独立统计或测试程序，真实运行需在已有 CMAQ/MPI 与输入数据的计算节点执行。
+UTC00–24 对应 CST08 至次日 CST08，不能当作同日期 CST 自然日 MDA8。日统计需另行计算；运行脚本需在配置好 CMAQ/MPI 与输入数据的计算节点执行。

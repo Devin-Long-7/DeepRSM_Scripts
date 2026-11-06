@@ -1,8 +1,8 @@
 # CMAQ D3 ic_only_c10 文件说明
 
-> **历史资料：IC-RB08（UTC 00:00 起跑，对应北京时间 08:00 起跑）。**
-> 本文件描述旧 C10 结果目录与旧实验产物；当前目录中的 IC-RB00 实验请按
-> [README.md](../README.md) 和 `../IC-RB00_scripts/` 操作。旧结果与报告保留在原始路径。
+> **IC-RB08 结果：UTC 00:00 起跑，对应北京时间 08:00 起跑。**
+> 以下说明 UTC00 实验结果的命名与目录布局。CST00 实验流程见
+> [README.md](../README.md) 和 `../IC-RB00_scripts/`。下列绝对路径为原部署位置，结果数据需另行获取。
 
 > 路径：`/backupdata/devin/cmaq_output/d3/ic_only_c10/`
 > 模型：CMAQ v5.3.2, cb6r3_ae7_aq, 网格 SD_2013, RUNID=PRD
@@ -65,5 +65,5 @@
 
 ## 四、数据验证
 
-重跑的 C₁₁（propagated）与旧 COMBINE 逐城市逐日对比：
-**max |diff| = 0.0001 ppbv（完全一致，9 城市 × 5 天全部验证通过）。**
+C₁₁（propagated）与参考 COMBINE 的逐城市逐日对比覆盖 9 城市 × 5 天：
+**max |diff| = 0.0001 ppbv。**

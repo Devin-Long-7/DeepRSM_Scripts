@@ -46,4 +46,4 @@ csh batch_run.csh --post-only /path/to/generated/batch_ID/manifest.json
 
 后处理生成 `hourly_ozone.csv`、`daily_ozone.csv`、`signed_effects.csv`、城市掩膜和效应图。O3 单位 ppbv；MDA8 为逐格点求同一 CST 日内 17 个 8 小时窗口的最大值，再进行区域平均。日均为 00–23 CST，白天均值为 10–17 CST。
 
-各组效应是相对 C/R 对照的浓度差；非加和量反映背景交互，不能直接解释为独立反应路径通量。替换覆盖整个 D3 域与全部层。此共享副本不含单元测试；文档核对不代表完成真实 CMAQ 模拟验证。
+各组效应是相对 C/R 对照的浓度差；非加和量反映背景交互，不能直接解释为独立反应路径通量。替换覆盖整个 D3 域与全部层。

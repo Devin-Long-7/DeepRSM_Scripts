@@ -39,4 +39,4 @@ csh post_scripts/run_post_localday_controls.csh \
 
 先按真实 UTC 日合并 ACONC/APMDIAG 分段，再 COMBINE、提取和转换为日文件。产物为 `COMBINE_ACONC_*.nc`、`*_18species.nc`、`Daily_*_18species.nc`；这些均是运行产物，不是随包输入。
 
-“18species”是历史文件名，实际提取还含 NOX、VOC、O3_UGM3 等派生量，以脚本列表为准。MDA8 必须在完整目标 CST 时间窗上计算，不应把单个 8/16 小时分段当成完整日。`check_daily_o3.py` 接收一个已有日文件路径；没有提供生产结果或独立测试集。
+“18species”是历史文件名，实际提取还含 NOX、VOC、O3_UGM3 等派生量，以脚本列表为准。MDA8 必须在完整目标 CST 时间窗上计算，不应把单个 8/16 小时分段当成完整日。`check_daily_o3.py` 接收一个已有日文件路径，用于检查生成的日臭氧文件。

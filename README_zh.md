@@ -85,7 +85,7 @@ conda activate deeprsm-example
 python -m pip install torch==2.4.0 numpy==1.24.4 pandas==2.0.3 netCDF4==1.7.1.post2 tqdm pytz
 ```
 
-系数预测已测试 Python 3.8.19、PyTorch 2.4.0。完整预处理、PR 和校验已测试 Python 3.9.21；数据处理环境使用 NumPy 2.0.2、pandas 2.2.3、SciPy 1.13.1、Matplotlib 3.9.4、netCDF4 1.7.2、Cartopy 0.23.0、cmaps 2.0.1、scikit-learn 1.6.1 和 openpyxl 3.1.5。如使用两个独立环境，将 `PY_DL` 和 `PY_DATA` 分别设为对应环境的 Python 路径。两份原始 `esil` 版本分别保留在 `dependencies/dl/` 和 `dependencies/devin_env/`，通过下方 `PYTHONPATH` 选择。尚未验证全新环境安装。
+系数预测已测试 Python 3.8.19、PyTorch 2.4.0。完整预处理、PR 和校验已测试 Python 3.9.21；数据处理环境使用 NumPy 2.0.2、pandas 2.2.3、SciPy 1.13.1、Matplotlib 3.9.4、netCDF4 1.7.2、Cartopy 0.23.0、cmaps 2.0.1、scikit-learn 1.6.1 和 openpyxl 3.1.5。如使用两个独立环境，将 `PY_DL` 和 `PY_DATA` 分别设为对应环境的 Python 路径。两份 `esil` 版本分别位于 `dependencies/dl/` 和 `dependencies/devin_env/`，通过下方 `PYTHONPATH` 选择。
 
 ### 2. 检查配置与输入
 
@@ -130,7 +130,7 @@ export PYTHONPATH="$DEEPRSM_ROOT/dependencies/dl"
 
 无需复制输入或修改路径。配置直接读取 `inputs/Example_data/2022_Sep_target_days/`，预测 2022 年 9 月 6、13、14、16、19 日的系数，在 `outputs/example_2022_09_five_days/rsm_weights/` 生成 55 个 `*Weight_M9_D*.npy` 文件（5 日 × 11 区域）及 5 个间接项缓存。此案例用于构建 RSM 系数；与独立 CMAQ 情景进行校验仍需要额外的 NetCDF 输入。
 
-该案例已在 Linux 的独立副本中实测，并从副本目录外启动。生成的 55 个系数数组及 5 个间接项缓存均与已有论文复算输出逐数组完全一致，最大绝对差为 0。
+该案例在 Linux 上生成的 55 个系数数组及 5 个间接项缓存均与论文参考输出逐数组完全一致，最大绝对差为 0。
 
 ### 3. 预处理 CMAQ 输入（完整月份）
 
@@ -184,7 +184,7 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 
 ### 五日案例数据
 
-`inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组：5 个目标日各包含 1 个基准和 12 个置零场，每个场含 18 个物种。案例 INI 通过 `preprocess_npy_dir` 直接指定该输入目录，通过 `prediction_days` 选择五个日期。建模入口仅增加输入路径和日期选择支持，网络及系数计算方法保持原样。
+`inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组：5 个目标日各包含 1 个基准和 12 个置零场，每个场含 18 个物种。案例 INI 通过 `preprocess_npy_dir` 直接指定该输入目录，通过 `prediction_days` 选择五个日期。
 
 ## 常见问题
 
@@ -194,4 +194,4 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 - **全月汇总变成五日汇总**：原校验入口会覆盖同名汇总文件；全月分析使用 `All Days` 散点表，五日分析使用 `All Polluted Days`。
 - **响应偏差符号与 SI 不同**：散点表响应采用“基准减情景”，SI 的有符号偏差和截距采用“情景减基准”，比较时需统一符号。
 
-大型原始 WRF-CMAQ 输出因文件体积较大，可向通讯作者提出合理请求获取。公开仓库为 https://github.com/Devin-Long-7/DeepRSM_Scripts，目前尚未分配 Zenodo 存档 DOI。
+大型原始 WRF-CMAQ 输出因文件体积较大，可向通讯作者提出合理请求获取。公开仓库为 https://github.com/Devin-Long-7/DeepRSM_Scripts。

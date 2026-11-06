@@ -39,4 +39,4 @@ Replace paths with completed segments and a new output location. This entry has 
 
 ACONC/APMDIAG segments are assembled by UTC day before COMBINE, extraction and daily conversion. Outputs include `COMBINE_ACONC_*.nc`, `*_18species.nc` and `Daily_*_18species.nc`; these are generated, not bundled inputs.
 
-The historical “18species” name also covers derived NOX, VOC and O3_UGM3; inspect the actual variable list. Calculate MDA8 over complete target CST coverage, not a single 8/16-hour segment. `check_daily_o3.py` takes an existing daily file path. Production datasets and standalone tests are not included.
+The historical “18species” name also covers derived NOX, VOC and O3_UGM3; inspect the actual variable list. Calculate MDA8 over complete target CST coverage, not a single 8/16-hour segment. `check_daily_o3.py` takes an existing daily file path to check the generated ozone data.

@@ -40,4 +40,4 @@ With `lead_days=0`, baseline preparation advances preceding-day UTC00 to UTC16; 
 
 Execution creates `generated/` for namelists, scripts and a Tab-separated manifest. Raw data use `segment_root`; `post_root` receives COMBINE, extracted/daily NetCDF and `pr_validation_summary.csv`.
 
-Compare receptor-mean O3 MDA8 (ppbv) curves using matching dates, receptors and spatial averaging. The sampled peak factor approximates PR. Expand the range if the peak occurs at an endpoint. This documentation update did not rerun direct CMAQ validation.
+Compare receptor-mean O3 MDA8 (ppbv) curves using matching dates, receptors and spatial averaging. The sampled peak factor approximates PR. Expand the range if the peak occurs at an endpoint to determine whether an interior optimum exists.

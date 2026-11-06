@@ -30,7 +30,7 @@ IC-RB-CST00_scripts/
 
 Check dates, `BASELINE_CGRID_ROOT`, CMAQ/MPI, meteorology, BC, emissions, masks, namelists and outputs. Inspect internal CGRID timestamps: preceding-day UTC16 is required.
 
-Defaults reference sibling `../cctm_scripts_v5.3.2/` for namelists/generator and `../post_scripts_v5.3.2/` for COMBINE templates/species definitions. Both are now bundled; retain their relative layout. Local `post/` wraps scheduling and checks. CMAQ/COMBINE executables and large input datasets remain external. Requirements include csh, GNU utilities, Python, NetCDF/NCO and compatible MPI.
+Defaults reference sibling `../cctm_scripts_v5.3.2/` for namelists/generator and `../post_scripts_v5.3.2/` for COMBINE templates/species definitions; retain their relative layout. Local `post/` wraps scheduling and checks. CMAQ/COMBINE executables and large input datasets remain external. Requirements include csh, GNU utilities, Python, NetCDF/NCO and compatible MPI.
 
 ## Usage
 
@@ -49,4 +49,4 @@ The no-argument batch selects `prd2zero` and `everywhere2zero`. Dry-run generate
 
 Execution creates `generated/` for scripts, manifests and logs; model outputs use `OUTDIR_BASE`. Segment 1 covers preceding-day UTC16–24 and segment 2 target-day UTC00–16. Neither alone is a full day.
 
-Post-processing assembles hourly/CST daily products and checks restart times and coverage. Review cleanup options such as `CLEANUP_CCTM_OUTPUT` before production execution. Additional CST40 batch scripts and tests are not bundled. Documentation/source review does not constitute a new CMAQ run.
+Post-processing assembles hourly/CST daily products and checks restart times and coverage. Review cleanup options such as `CLEANUP_CCTM_OUTPUT` before execution.

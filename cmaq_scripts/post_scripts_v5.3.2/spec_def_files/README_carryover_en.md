@@ -10,4 +10,4 @@ Existing aggregate outputs include PANS=PAN+PANX+OPAN and NTR=NTR1+NTR2+INTR. Do
 
 Explicitly select this definition for COMBINE. `1_run_combine_aconc.csh` sets `SPECIES_DEF` internally, so setting the variable only in an outer shell may be overridden. Configure the actual internal definition path in a working copy and verify mechanism, input units and output variables. Preserve complete COMBINE output or extend the extraction list; the original `2_extract_18species_by_nco.csh` discards the added species.
 
-This documentation does not establish successful COMBINE execution on the target dataset.
+After running COMBINE, check that the output retains the added variables.

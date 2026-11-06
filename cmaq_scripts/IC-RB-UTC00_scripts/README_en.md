@@ -45,8 +45,8 @@ csh batch_run_cases.csh oos3
 csh run_manager.csh cctm_config_D3_150X117_202209_IC-RB_base_on_cgrid.csh --dry-run
 ```
 
-The batch defaults to `oos3`. Dry-run generates/checks scripts without running CMAQ. The default post-processing directory `../post_scripts_v5.3.2/` is now bundled alongside this workflow; CMAQ/COMBINE executables and raw inputs remain external.
+The batch defaults to `oos3`. Dry-run generates/checks scripts without running CMAQ. Default postprocessing uses sibling `../post_scripts_v5.3.2/`; CMAQ/COMBINE executables and raw inputs must be configured separately.
 
 ## Outputs
 
-`generated/` is created at runtime for scripts, namelists and logs. Raw data use `OUTDIR_BASE`; post-processing uses configured destinations. Review `DELETE_AFTER_RUN` and post-processing cleanup settings. This documentation update reviews source/path behavior without executing production simulations.
+`generated/` is created at runtime for scripts, namelists and logs. Raw data use `OUTDIR_BASE`; post-processing uses configured destinations. Review `DELETE_AFTER_RUN` and post-processing cleanup settings.

@@ -27,10 +27,10 @@ csh run_cctm_D3_ISAM_daily_restart_CST00.csh 2022-09-06
 csh launch_isam_cst00_5days.csh
 ```
 
-入口没有 `--dry-run`。五日启动器在单日失败后打印错误并继续，末尾完成提示不代表全部成功。
+入口直接运行 CMAQ，没有 `--dry-run`。五日启动器在单日失败后打印错误并继续；运行后逐日检查退出状态和日志。
 
 ## 输出与校验
 
 主脚本 `OUTDIR` 默认采用 `isam_daily_cst00` 输出树。seg01 为前日 UTC16 起 8 小时、标签新启动；seg02 为当日 UTC00 起 16 小时，通过 `ISAM_PREVDAY` 接续 seg01 的 SA_CGRID。
 
-检查模型日志、CGRID/SA_CGRID、SA_ACONC 时间、标签总和与 bulk O3 一致性。按真实时间拼接后才可计算完整 CST 日指标。ISAM 标签份额与 IC-RB 浓度差不能直接等同。本目录不含独立后处理或测试集；本文档不声称重新完成模拟。
+检查模型日志、CGRID/SA_CGRID、SA_ACONC 时间、标签总和与 bulk O3 一致性。按真实时间拼接后才可计算完整 CST 日指标。ISAM 标签份额与 IC-RB 浓度差不能直接等同；本目录的运行脚本不包含独立后处理程序。

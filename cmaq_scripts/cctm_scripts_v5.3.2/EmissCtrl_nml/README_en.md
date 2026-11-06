@@ -20,4 +20,4 @@ Existing `EmissCtrl_*.nml` files provide CB6R3/AE7/AQ scenario inputs through co
 
 Set `GENERATE_NML=N` in the parent configuration and select `NML_PATH`. Check mask region names, streams, families, factors and mechanism. A multiplicative factor of 0.7 retains 70% of baseline emissions.
 
-For CSV-driven generation, use the parent `create_emissCtrl_nml.py` and `nml_config/`; the generator does not automatically use these existing cases as templates. Copies under `cctm_scripts_v5.3.2/EmissCtrl_nml/` serve shared dependencies and are not automatically synchronized after editing.
+For CSV-driven generation, use the parent `create_emissCtrl_nml.py` and `nml_config/`; the generator does not automatically use these existing cases as templates. Other modules also reference `cctm_scripts_v5.3.2/EmissCtrl_nml/`. Its files and those in `IC-RB-UTC00_scripts/EmissCtrl_nml/` are maintained independently.

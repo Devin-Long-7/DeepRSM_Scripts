@@ -35,4 +35,4 @@ There is no dry-run option. The launcher continues after a failed day; check eac
 
 Daily outputs default to configured `isam_daily/D3/2022/<month>/`. `ISAM_NEW_START=Y` and an unset `ISAM_PREVDAY` make daily tags independent. Check SA_ACONC, SA_CGRID, termination logs, units and tag sums.
 
-UTC00–24 spans CST08 to the following CST08 and must not be treated as same-date CST calendar-day MDA8. No separate statistics program or test suite is included. Production runs require CMAQ/MPI and the external inputs on a compute node.
+UTC00–24 spans CST08 to the following CST08 and must not be treated as same-date CST calendar-day MDA8. Calculate daily statistics separately. Run the scripts on a compute node with CMAQ/MPI and the required inputs configured.

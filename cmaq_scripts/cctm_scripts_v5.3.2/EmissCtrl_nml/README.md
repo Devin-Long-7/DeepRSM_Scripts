@@ -20,4 +20,4 @@
 
 在上级配置中设置 `GENERATE_NML=N`，将 `NML_PATH` 指向所需文件。运行前核对 `CMAQ_MASKS` 的区域名、排放流、化学家族、缩放因子和机理是否匹配。乘法因子 0.7 表示保留基准排放的 70%。
 
-如需按 CSV 动态生成，使用上级 `create_emissCtrl_nml.py` 和 `nml_config/`，不要把目录中的既有情景当作生成器会自动读取的模板。复制到 `cctm_scripts_v5.3.2/EmissCtrl_nml/` 的文件用于共享依赖；修改某份副本不会自动同步另一份。
+如需按 CSV 动态生成，使用上级 `create_emissCtrl_nml.py` 和 `nml_config/`；生成器不自动读取目录中的既有情景作为模板。`cctm_scripts_v5.3.2/EmissCtrl_nml/` 也供其他模块引用；它与 `IC-RB-UTC00_scripts/EmissCtrl_nml/` 中的文件各自独立维护。

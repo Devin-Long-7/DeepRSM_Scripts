@@ -39,4 +39,4 @@ Dry-run generates scripts without simulation, post-processing or cleanup. Normal
 
 A baseline preparation segment advances continuous baseline UTC00 CGRID to the control start at UTC16. P0 uses three segments including preparation. A1/A2/A3 normally use four, combining intervening full UTC days into one continuous segment. With `last_segment_full_day=N`, the final segment ends at target-day UTC16, or CST24.
 
-Runtime creates `generated/` and logs. Raw, COMBINE and daily data use configured destinations. Automatic post-processing calls `post_scripts/run_post_localday_controls.csh`. External requirements include CMAQ/MPI, meteorology/emissions/IC/BC, csh, GNU tools, NCO, COMBINE and Python. No production simulation or cleanup was run during this documentation update.
+Runtime creates `generated/` and logs. Raw, COMBINE and daily data use configured destinations. Automatic post-processing calls `post_scripts/run_post_localday_controls.csh`. External requirements include CMAQ/MPI, meteorology/emissions/IC/BC, csh, GNU tools, NCO, COMBINE and Python.

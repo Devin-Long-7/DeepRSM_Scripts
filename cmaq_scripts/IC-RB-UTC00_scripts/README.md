@@ -45,8 +45,8 @@ csh batch_run_cases.csh oos3
 csh run_manager.csh cctm_config_D3_150X117_202209_IC-RB_base_on_cgrid.csh --dry-run
 ```
 
-批处理无参数默认情景为 `oos3`；dry-run 生成和检查脚本，不执行模型。默认后处理引用同级 `../post_scripts_v5.3.2/`，现已随共享目录提供，但其中 CMAQ/COMBINE 程序与原始输入仍需另行安装和配置。
+批处理无参数默认情景为 `oos3`；dry-run 生成和检查脚本，不执行模型。默认后处理引用同级 `../post_scripts_v5.3.2/`；CMAQ/COMBINE 程序与原始输入需另行安装和配置。
 
 ## 输出
 
-`generated/` 在运行时创建，保存运行脚本、NML 和日志，不是已有输入目录。模型数据写入 `OUTDIR_BASE`，后处理写入所选输出路径。检查 `DELETE_AFTER_RUN` 和后处理清理选项，避免误删需保留的运行产物。本文档只做源码与路径核对，未执行生产模拟。
+`generated/` 在运行时创建，保存运行脚本、NML 和日志，不是已有输入目录。模型数据写入 `OUTDIR_BASE`，后处理写入所选输出路径。检查 `DELETE_AFTER_RUN` 和后处理清理选项，避免误删需保留的运行产物。

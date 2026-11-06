@@ -55,7 +55,7 @@ python 7_plot_daily_map.py /data/Daily_COMBINE.nc /data/Daily_BASE.nc \
   2022-09-06 2022-09-06 O3_MDA8 D3 base /data/boundary.shp
 ```
 
-The converter writes `Daily_<input filename>` beside the input and skips existing output by default. The value `8` is the hour offset passed to `esil`; provide sufficient coverage for the selected local day and avoid applying the offset twice. Daily metric definitions are implemented in `esil.netcdf_helper.convert_hr2daily_data`, so this wrapper alone does not establish their complete statistical rules. Maps require compatible baseline dates, grids and boundary data.
+The converter writes `Daily_<input filename>` beside the input and skips existing output by default. The value `8` is the hour offset passed to `esil`; provide sufficient coverage for the selected local day and avoid applying the offset twice. Daily time windows and missing-value handling are implemented in `esil.netcdf_helper.convert_hr2daily_data`; check the statistical rules in the installed version before use. Maps require compatible baseline dates, grids and boundary data.
 
 ## Output Checks
 

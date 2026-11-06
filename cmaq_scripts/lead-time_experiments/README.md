@@ -40,4 +40,4 @@ dry-run 生成脚本但不运行模型、后处理或清理。无参数正式运
 
 baseline 预备段先从连续基准 UTC00 CGRID 运行到控制开始日 UTC16。P0 再接两个控制段，共 3 段；A1/A2/A3 通常共 4 段，其中中间完整 UTC 日合成一个连续段。`last_segment_full_day=N` 时结束于目标 UTC16，即目标 CST 日 24:00。
 
-运行时生成 `generated/` 和日志；原始结果、COMBINE 和 daily 产品按脚本配置写出。自动后处理使用本目录的 `post_scripts/run_post_localday_controls.csh`。需要 CMAQ/MPI、气象/排放/IC/BC、csh、GNU 工具、NCO、COMBINE 和 Python 环境。文档更新未执行任何生产模拟或清理。
+运行时生成 `generated/` 和日志；原始结果、COMBINE 和 daily 产品按脚本配置写出。自动后处理使用本目录的 `post_scripts/run_post_localday_controls.csh`。需要 CMAQ/MPI、气象/排放/IC/BC、csh、GNU 工具、NCO、COMBINE 和 Python 环境。

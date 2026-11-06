@@ -27,10 +27,10 @@ csh run_cctm_D3_ISAM_daily_restart_CST00.csh 2022-09-06
 csh launch_isam_cst00_5days.csh
 ```
 
-No dry-run option is implemented. The launcher continues after a failed day; its final message does not prove success for all days.
+The entry runs CMAQ directly without a dry-run option. The launcher continues after a failed day; check each day's exit status and logs after execution.
 
 ## Outputs
 
 Configured `OUTDIR` defaults to the `isam_daily_cst00` tree. Segment 1 runs eight hours from preceding-day UTC16 with new tags; segment 2 runs sixteen hours from target-day UTC00, resuming segment 1 SA_CGRID through `ISAM_PREVDAY`.
 
-Check model logs, physical/tagged restart files, SA_ACONC timestamps and tag-sum consistency with bulk ozone. Assemble segments by actual time before calculating CST daily statistics. ISAM fractions and IC-RB concentration differences have different definitions. No standalone post-processing program or tests are included; this documentation does not claim a new simulation run.
+Check model logs, physical/tagged restart files, SA_ACONC timestamps and tag-sum consistency with bulk ozone. Assemble segments by actual time before calculating CST daily statistics. ISAM fractions and IC-RB concentration differences have different definitions. These run scripts do not include a standalone postprocessing program.

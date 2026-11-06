@@ -29,7 +29,7 @@ shapley_attribution_scripts/
 `-- .gitignore
 ```
 
-`post/` 文件确实包含在当前副本。共用 NML 位于上两级 `cctm_scripts_v5.3.2/`，COMBINE 模板及定义位于 `post_scripts_v5.3.2/`，均需与本目录保持相对层级。历史说明文件保留其原有用途，不代表旧结果数据随包提供。
+`IC-RB00_scripts/post/` 提供重启时刻检查及后处理入口。共用 NML 位于该脚本目录上两级的 `cctm_scripts_v5.3.2/`，COMBINE 模板及定义位于 `post_scripts_v5.3.2/`，需保持相对层级。`IC-RB08_scripts/CMAQ_ic_only_c10_files_description.md` 描述 UTC00 实验的结果命名与布局；对应原始模型输出需另行提供。
 
 ## 四格与模拟
 
@@ -43,7 +43,7 @@ csh run_cst00_shapley.csh --dry-run
 csh run_cst00_shapley.csh
 ```
 
-seg01 为前日 UTC16–24，seg02 为目标日 UTC00–16。运行时生成 `generated/`，模型结果写入各配置的输出根目录，后处理日产品位于对应 `post/`。首次使用应检查清理开关及外部输入，本文档未执行这些模拟。
+seg01 为前日 UTC16–24，seg02 为目标日 UTC00–16。运行时生成 `generated/`，模型结果写入各配置的输出根目录，后处理日产品位于对应 `post/`。运行前检查清理开关及外部输入。
 
 ## 归因计算
 
@@ -64,4 +64,4 @@ same_day_Shapley = 0.5 * ((C00 - C01) + (C10 - C11))
 carryover_Shapley = 0.5 * ((C00 - C10) + (C01 - C11))
 ```
 
-两分量之和应等于 total。输入 total 为零时 HDF 输出 NaN；小分母的百分比需谨慎解释。当前包不含 `tests/`，不在说明中宣称已有测试通过。
+两分量之和应等于 total。输入 total 为零时 HDF 输出 NaN；小分母的百分比需谨慎解释。

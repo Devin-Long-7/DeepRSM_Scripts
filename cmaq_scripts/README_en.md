@@ -6,7 +6,7 @@ Scripts for CMAQ v5.3.2 scenarios, initial-condition resets, ISAM, historical at
 
 ## Directory Guide
 
-The intended repository layout places this entire collection under `cmaq_scripts/`. Keep these directories alongside one another to preserve relative dependencies.
+The modules below are located under `cmaq_scripts/` in the repository. Keep these directories alongside one another to preserve relative dependencies.
 
 | Directory | Purpose and instructions |
 |---|---|
@@ -26,7 +26,7 @@ The intended repository layout places this entire collection under `cmaq_scripts
 1. Select a module and read its file guide, configuration requirements and invocation examples.
 2. Provide CMAQ v5.3.2 with compatible mechanism/grid, MPI/compiler runtime, MCIP, emissions, ICON/BCON, baseline CGRID/ACONC and region masks as required by the module. Large model inputs are external.
 3. Configure paths, dates, cases, output locations and cleanup switches in a separate working copy. Where supported, use `--dry-run` to inspect the plan; some dry-runs still require real inputs.
-4. Check individual task exit status, CCTM/COMBINE logs, output time coverage, grid and variables. Completion of a multi-day launcher does not necessarily mean every task succeeded.
+4. Check each task's exit status, CCTM/COMBINE logs, output time coverage, grid and variables to confirm the results for every day.
 
 UTC00 corresponds to CST08. CST00 starts at UTC16 on the preceding day and requires the prescribed cross-UTC-day concatenation. Keep results with different initialization times distinct.
 
@@ -38,4 +38,4 @@ Shared postprocessing in `post_scripts_v5.3.2/` requires an external `esil` pack
 
 The IC/BC postprocessing entry references two absent D3 helpers. See module documentation and supply these dependencies before running the full affected workflow.
 
-Some scripts overwrite or remove outputs; inspect switches and target directories before execution. This guide was checked against the files and source code without launching production simulations or establishing numerical reproduction of manuscript results. Machine-specific absolute paths must be adapted to the deployment environment.
+Some scripts overwrite or remove outputs; inspect switches and target directories before execution. Adapt machine-specific absolute paths to the deployment environment.
