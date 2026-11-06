@@ -1,0 +1,3 @@
+case_type,family_name,members
+standard,ALL_MM,GRIDDED_AV
+sector,ALL_MM,GRIDDED_DL;GRIDDED_FDL;GRIDDED_GC;GRIDDED_GD;GRIDDED_RJ;GRIDDED_OT
