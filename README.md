@@ -2,15 +2,60 @@
 
 [中文](README_zh.md)
 
-Use the trained Daily DeepRSM model to build daily response surfaces from baseline and regional zero-out CMAQ concentrations, calculate ozone PR, VNr and EKMA diagnostics, and validate predictions against independent CMAQ scenarios. The example covers the Pearl River Delta in September 2022. Ozone concentrations are in ppb.
+This repository contains the Daily DeepRSM modeling and diagnostic workflow and supporting CMAQ experiment scripts. Use the trained model to build daily response surfaces from baseline and regional zero-out CMAQ concentrations, calculate ozone PR, VNr and EKMA diagnostics, and validate predictions against independent CMAQ scenarios. The example covers the Pearl River Delta in September 2022. Ozone concentrations are in ppb.
+
+## Directory Structure
+
+```text
+DeepRSM_Scripts/
+|-- README.md / README_zh.md
+|-- cmaq_scripts/                   # CMAQ runs, attribution and postprocessing
+|   |-- README.md / README_en.md   # CMAQ module guide
+|   |-- cctm_scripts_v5.3.2/       # Continuous runs; default IC_RB_MODE=N
+|   |-- IC-RB-UTC00_scripts/       # Daily UTC00 resets; default IC_RB_MODE=Y
+|   |-- IC-RB-CST00_scripts/       # Daily resets at CST00
+|   |-- IC-RB-UTC00_isam_scripts/  # UTC00 ISAM runs
+|   |-- IC-RB-CST00_isam_scripts/  # CST00 ISAM runs
+|   |-- carryover_species_experiments/ # Initial-state species-group experiments
+|   |-- lead-time_experiments/     # Emission-control lead-time experiments
+|   |-- pr_cmaq_validation_scripts/ # Direct CMAQ validation of PR
+|   |-- shapley_attribution_scripts/ # Same-day/history attribution
+|   `-- post_scripts_v5.3.2/       # COMBINE, daily statistics and maps
+|-- create_rsm_struct/             # Prediction network and data classes
+|-- dependencies/
+|   |-- dl/esil/                   # Original inference dependency
+|   `-- devin_env/esil/            # Original preprocessing and diagnostics dependency
+|-- inputs/
+|   |-- Trained_model/             # Three released O3 checkpoints
+|   |-- Example_data/              # Five target-day preprocessed arrays
+|   `-- Matrix_for_Training_Run1-21.csv
+|-- results/                       # Bundled study diagnostics
+|-- a_config_d3_202209_M_devin_0605.ini
+|-- a_config_d3_202209_M_devin_8_oos.ini
+|-- a_config_example_five_days.ini  # Bundled DeepRSM example
+|-- b_input_data_helper.py          # Configuration and input loading
+|-- c_data_preprocess.py            # Preprocessing
+|-- d_get_equation_item_weight.py   # CNN prediction of RSM coefficients
+|-- e_rsm_helper.py                 # RSM equations and statistics
+|-- f_rsm_performance.py            # OOS validation
+|-- g_rsm_vnr_pr.py                 # PR, VNr and EKMA
+|-- run_pipeline.py                # Original DeepRSM batch entry point
+|-- LICENSE                        # MIT: released software and trained checkpoint
+|-- LICENSE-DATA                   # CC BY 4.0: processed numerical outputs
+`-- outputs/                       # Generated on execution; excluded from Git
+```
+
+For **DeepRSM modeling and diagnostics**, follow [Quick Start](#quick-start) below. For **CMAQ experiments**, start with the [CMAQ module guide](cmaq_scripts/README_en.md). The complete [continuous-run](cmaq_scripts/cctm_scripts_v5.3.2/README_en.md) and [UTC00-reset](cmaq_scripts/IC-RB-UTC00_scripts/README_en.md) code copies are retained separately to distinguish their default `IC_RB_MODE=N` and `Y` workflows.
 
 ## Public Release And License
 
-The public release includes the trained model, preprocessing and RSM construction code, PR/VNr/EKMA diagnostic code, validation code, scenario configuration files and processed outputs. Training scripts and the training workflow are not included in the public release. The training scripts are available from the corresponding author upon reasonable request. The network definition needed to load the trained model is included in `create_rsm_struct/`.
+The public release includes the trained model, preprocessing and RSM construction code, PR/VNr/EKMA diagnostic code, validation code, scenario configuration files, processed outputs and CMAQ experiment scripts in `cmaq_scripts/`. Training scripts and the training workflow are not included in the public release. The training scripts are available from the corresponding author upon reasonable request. The network definition needed to load the trained model is included in `create_rsm_struct/`.
 
 The MIT License applies to the authors' released software, accompanying documentation, scenario configurations and trained model checkpoint; see `LICENSE` in the public repository. Training scripts retained privately are outside this public license grant. Processed numerical output data are provided under CC BY 4.0; see `LICENSE-DATA`. Third-party material retains its applicable original terms and notices; the repository license does not override those terms.
 
 ## Quick Start
+
+The steps below cover the root-level DeepRSM workflow. CMAQ execution, configuration and dependencies are documented separately in each module under [cmaq_scripts/](cmaq_scripts/README_en.md).
 
 **To inspect the study results**, open the PR CSV, EKMA workbook and OOS scatter tables in `results/`. No model execution is required. Large CSVs use `.csv.gz` compression; decompress them or read them directly with pandas.
 
@@ -140,35 +185,6 @@ The complete eight-scenario monthly table contains 1,493,040 rows. Its five-day 
 ### Example Five-Day Model Inputs
 
 `inputs/Example_data/2022_Sep_target_days/` contains 65 preprocessed `.npy` arrays: one baseline and 12 zero-out fields for each of five days, with 18 species per field. The example INI reads this directory directly through `preprocess_npy_dir` and selects the five dates through `prediction_days`. The only modeling entry changes are configurable input paths and date selection; the network and coefficient calculations are unchanged.
-
-## Directory Structure
-
-```text
-DeepRSM_Scripts/
-|-- README.md / README_zh.md
-|-- LICENSE                        # MIT: released software and trained checkpoint
-|-- LICENSE-DATA                   # CC BY 4.0: processed numerical outputs
-|-- a_config_d3_202209_M_devin_0605.ini
-|-- a_config_d3_202209_M_devin_8_oos.ini
-|-- a_config_example_five_days.ini  # Bundled example
-|-- b_input_data_helper.py          # Configuration and input loading
-|-- c_data_preprocess.py            # Preprocessing
-|-- d_get_equation_item_weight.py   # CNN prediction of RSM coefficients
-|-- e_rsm_helper.py                # RSM equations and statistics
-|-- f_rsm_performance.py            # OOS validation
-|-- g_rsm_vnr_pr.py                 # PR, VNr and EKMA
-|-- run_pipeline.py                # Original batch entry point
-|-- create_rsm_struct/             # Prediction network and data classes
-|-- dependencies/
-|   |-- dl/esil/                   # Original inference dependency
-|   `-- devin_env/esil/            # Original preprocessing and diagnostics dependency
-|-- inputs/
-|   |-- Trained_model/            # Three released O3 checkpoints
-|   |-- Example_data/              # Five target-day preprocessed arrays
-|   `-- Matrix_for_Training_Run1-21.csv
-|-- results/                       # Bundled study diagnostics
-`-- outputs/                       # Generated on execution; excluded from Git
-```
 
 ## Troubleshooting
 

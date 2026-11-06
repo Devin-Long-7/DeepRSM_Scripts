@@ -2,15 +2,60 @@
 
 [English](README.md)
 
-使用已训练的 Daily DeepRSM 模型，将 CMAQ 基准及区域置零日浓度转换为逐日响应面模型，计算臭氧 PR、VNr 和 EKMA，并与独立 CMAQ 情景进行 OOS 校验。示例对应 2022 年 9 月珠三角，臭氧单位为 ppb。
+本仓库包含 Daily DeepRSM 建模与诊断流程，以及配套 CMAQ 实验脚本。使用已训练模型，将 CMAQ 基准及区域置零日浓度转换为逐日响应面模型，计算臭氧 PR、VNr 和 EKMA，并与独立 CMAQ 情景进行 OOS 校验。示例对应 2022 年 9 月珠三角，臭氧单位为 ppb。
+
+## 目录结构
+
+```text
+DeepRSM_Scripts/
+|-- README.md / README_zh.md
+|-- cmaq_scripts/                   # CMAQ 运行、归因与后处理
+|   |-- README.md / README_en.md   # CMAQ 模块索引
+|   |-- cctm_scripts_v5.3.2/       # 常规连续运行，默认 IC_RB_MODE=N
+|   |-- IC-RB-UTC00_scripts/       # UTC00 每日重置，默认 IC_RB_MODE=Y
+|   |-- IC-RB-CST00_scripts/       # CST00 每日重置
+|   |-- IC-RB-UTC00_isam_scripts/  # UTC00 ISAM 运行
+|   |-- IC-RB-CST00_isam_scripts/  # CST00 ISAM 运行
+|   |-- carryover_species_experiments/ # 初始场物种组替换实验
+|   |-- lead-time_experiments/     # 提前减排时长实验
+|   |-- pr_cmaq_validation_scripts/ # 直接 CMAQ PR 校验
+|   |-- shapley_attribution_scripts/ # 同日与历史贡献归因
+|   `-- post_scripts_v5.3.2/       # COMBINE、日统计与地图
+|-- create_rsm_struct/             # 建模网络与数据类
+|-- dependencies/
+|   |-- dl/esil/                   # 原始推理依赖
+|   `-- devin_env/esil/            # 原始预处理及诊断依赖
+|-- inputs/
+|   |-- Trained_model/             # 三个公开 O3 模型权重
+|   |-- Example_data/              # 五个目标日的预处理数组
+|   `-- Matrix_for_Training_Run1-21.csv
+|-- results/                       # 随仓库发布的论文诊断结果
+|-- a_config_d3_202209_M_devin_0605.ini
+|-- a_config_d3_202209_M_devin_8_oos.ini
+|-- a_config_example_five_days.ini  # 随仓库提供的 DeepRSM 案例
+|-- b_input_data_helper.py          # 配置及输入读取
+|-- c_data_preprocess.py            # 预处理
+|-- d_get_equation_item_weight.py   # CNN 预测 RSM 系数
+|-- e_rsm_helper.py                 # RSM 方程与统计
+|-- f_rsm_performance.py            # OOS 校验
+|-- g_rsm_vnr_pr.py                 # PR、VNr、EKMA
+|-- run_pipeline.py                # 原 DeepRSM 批处理入口
+|-- LICENSE                        # MIT：公开代码和已训练权重
+|-- LICENSE-DATA                   # CC BY 4.0：处理后数值输出
+`-- outputs/                       # 运行后生成，不纳入 Git
+```
+
+**DeepRSM 建模与诊断**见下方[快速开始](#快速开始)；**CMAQ 实验**从 [CMAQ 模块索引](cmaq_scripts/README.md)进入。[常规连续运行](cmaq_scripts/cctm_scripts_v5.3.2/README.md)与 [UTC00 每日重置](cmaq_scripts/IC-RB-UTC00_scripts/README.md)分别保留完整代码，默认 `IC_RB_MODE` 为 N 和 Y，便于区分两类实验。
 
 ## 公开范围与许可证
 
-公开发布内容包括已训练模型、预处理和 RSM 构建代码、PR/VNr/EKMA 诊断代码、校验代码、情景配置文件及处理后结果。训练脚本和训练流程不纳入公开发布。训练脚本可向通讯作者提出合理请求获取。加载已训练模型所需的网络结构定义保留在 `create_rsm_struct/`。
+公开发布内容包括已训练模型、预处理和 RSM 构建代码、PR/VNr/EKMA 诊断代码、校验代码、情景配置文件、处理后结果及 `cmaq_scripts/` 中的 CMAQ 实验脚本。训练脚本和训练流程不纳入公开发布。训练脚本可向通讯作者提出合理请求获取。加载已训练模型所需的网络结构定义保留在 `create_rsm_struct/`。
 
 作者公开的软件代码、配套文档、情景配置及已训练模型权重采用 MIT License，见公开仓库中的 `LICENSE`。私下保留的训练脚本不属于本次公开许可的授权范围。处理后的数值输出数据采用 CC BY 4.0，见 `LICENSE-DATA`。第三方材料保留其适用的原许可和声明，仓库许可证不替代第三方条款。
 
 ## 快速开始
+
+以下步骤适用于仓库根目录的 DeepRSM 流程。CMAQ 的运行方法、配置和依赖分别见 [cmaq_scripts/](cmaq_scripts/README.md) 中各模块说明。
 
 **只查看论文结果**：直接打开 `results/` 中的 PR CSV、EKMA Excel 和 OOS 散点表，无需运行模型。大型 CSV 已压缩为 `.csv.gz`，解压后即可读取，也可由 pandas 直接读取。
 
@@ -140,35 +185,6 @@ CFG=a_config_d3_202209_M_devin_8_oos.ini
 ### 五日案例数据
 
 `inputs/Example_data/2022_Sep_target_days/` 包含 65 个预处理 `.npy` 数组：5 个目标日各包含 1 个基准和 12 个置零场，每个场含 18 个物种。案例 INI 通过 `preprocess_npy_dir` 直接指定该输入目录，通过 `prediction_days` 选择五个日期。建模入口仅增加输入路径和日期选择支持，网络及系数计算方法保持原样。
-
-## 目录结构
-
-```text
-DeepRSM_Scripts/
-|-- README.md / README_zh.md
-|-- LICENSE                        # MIT：公开代码和已训练权重
-|-- LICENSE-DATA                   # CC BY 4.0：处理后数值输出
-|-- a_config_d3_202209_M_devin_0605.ini
-|-- a_config_d3_202209_M_devin_8_oos.ini
-|-- a_config_example_five_days.ini  # 随仓库提供的案例
-|-- b_input_data_helper.py          # 配置及输入读取
-|-- c_data_preprocess.py            # 预处理
-|-- d_get_equation_item_weight.py   # CNN 预测 RSM 系数
-|-- e_rsm_helper.py                # RSM 方程与统计
-|-- f_rsm_performance.py            # OOS 校验
-|-- g_rsm_vnr_pr.py                 # PR、VNr、EKMA
-|-- run_pipeline.py                # 原批处理入口
-|-- create_rsm_struct/             # 建模网络与数据类
-|-- dependencies/
-|   |-- dl/esil/                   # 原始推理依赖
-|   `-- devin_env/esil/            # 原始预处理及诊断依赖
-|-- inputs/
-|   |-- Trained_model/             # 三个公开 O3 模型权重
-|   |-- Example_data/              # 五个目标日的预处理数组
-|   `-- Matrix_for_Training_Run1-21.csv
-|-- results/                       # 随仓库发布的论文诊断结果
-`-- outputs/                       # 运行后生成，不纳入 Git
-```
 
 ## 常见问题
 
